@@ -12,7 +12,7 @@ TEST = 	[ `./hon-seq < in$(1).txt 2>/dev/null | head -1` == $(2) ] &&\
 		[ `mpirun -np 4  ./hon-par < in$(1).txt 2>/dev/null | head -1` == $(2) ] &&\
 		[ `mpirun -np 16 ./hon-par < in$(1).txt 2>/dev/null | head -1` == $(2) ]
 
-all : lu-seq
+all : lu-seq gauss-seq cholesky-seq
 
 debug :	CXXFLAGS=-U NDEBUG -O0 -g
 debug : all
@@ -30,6 +30,12 @@ common.o : common.cpp common.h
 lu-seq : lu-seq.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS)
 	
+gauss-seq : gauss-seq.cpp common.o
+	$(CXX) -o $@ $^ $(FLAGS)
+	
+cholesky-seq : cholesky-seq.cpp common.o
+	$(CXX) -o $@ $^ $(FLAGS)
+	
 clean :
-	rm -f lu-seq common.o
+	rm -f lu-seq gauss-seq cholesky-seq common.o
 

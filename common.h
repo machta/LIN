@@ -20,9 +20,6 @@ inline void error(string msg)
 
 void printResult(int n, double* x, long long ns, double flopCount);
 
-void forwardSubstitution(int n, int N, double* A, double* b, double* x);
-void backwardSubstitution(int n, int N, double* A, double* b, double* x);
-
 int init(int argc, char** argv, int* n, double** A, double** b);
 
 #endif // COMMON_H

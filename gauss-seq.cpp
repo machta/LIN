@@ -2,7 +2,7 @@
 
 #define A(r, c) A[N*(c) + (r)]
 
-void LU(int n, int N, double* A)
+void gauss(int n, int N, double* A)
 {
     for (int i = 0; i < n - 1; ++i)
     {
@@ -11,26 +11,11 @@ void LU(int n, int N, double* A)
         for (int j = i + 1; j < n; ++j)
             A(j, i) *= tmp;
         
-        /*for (int j = i + 1; j < n; ++j)
-            for (int k = i + 1; k < n; ++k)
-                A(j, k) -= A(j, i)*A(i, k);*/
-            
-        for (int k = i + 1; k < n; ++k)
+        // Here include the last column b otherwise the same as LU.      
+        for (int k = i + 1; k <= n; ++k) 
             for (int j = i + 1; j < n; ++j)
                 A(j, k) -= A(j, i)*A(i, k);
     }
-}
-
-// Solve Lx = b for x.
-void forwardSubstitution(int n, int N, double* A, double* x, double* b)
-{
-	for (int i = 0; i < n; ++i)
-	{
-		float sum = b[i];
-		for (int j = 0; j < i; ++j)
-			sum -= A(i, j)*x[j];
-		x[i] = sum;
-	}
 }
 
 // Solve Ux = b for x.
@@ -57,15 +42,14 @@ int main(int argc, char** argv)
 	
 	auto start = high_resolution_clock::now();
 	
-	LU(n, N, A);
+	gauss(n, N, A);
 	
-	forwardSubstitution(n, N, A, x, b);
-	backwardSubstitution(n, N, A, b, x);
+	backwardSubstitution(n, N, A, x, b);
 	
 	auto end = high_resolution_clock::now();	
 	
 	nanoseconds elapsedTime = end - start;
-	printResult(n, b, elapsedTime.count(), 2./3*n*n*n);
+	printResult(n, x, elapsedTime.count(), 2./3*n*n*n);
 	
 	delete[] A;
 	delete[] x;

@@ -92,27 +92,3 @@ void printResult(int n, double* x, long long ns, double flopCount)
 	fprintf(stderr, "Seconds elapsed: %f\nGFLOPS: %f\n", seconds, flopCount/giga/seconds);
 }
 
-// Solve Lx = b for x.
-void forwardSubstitution(int n, int N, double* A, double* x, double* b)
-{
-	for (int i = 0; i < n; ++i)
-	{
-		float sum = b[i];
-		for (int j = 0; j < i; ++j)
-			sum -= A(i, j)*x[j];
-		x[i] = sum;
-	}
-}
-
-// Solve Ux = b for x.
-void backwardSubstitution(int n, int N, double* A, double* x, double* b)
-{
-	for (int i = n - 1; i >= 0; --i)
-	{
-		float sum = b[i];
-		for (int j = i + 1; j < n; ++j)
-			sum -= A(i, j)*x[j];
-		x[i] = sum/A(i, i);
-	}
-}
-

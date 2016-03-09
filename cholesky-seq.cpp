@@ -1,23 +1,29 @@
 #include "common.h"
 
+#include <cmath>
+
 #define A(r, c) A[N*(c) + (r)]
 
-void LU(int n, int N, double* A)
+void cholesky(int n, int N, double* A)
 {
-    for (int i = 0; i < n - 1; ++i)
+    for (int j = 0; j < n; ++j)
     {
-        double tmp = 1/A(i, i);
-        
-        for (int j = i + 1; j < n; ++j)
-            A(j, i) *= tmp;
-        
-        /*for (int j = i + 1; j < n; ++j)
-            for (int k = i + 1; k < n; ++k)
-                A(j, k) -= A(j, i)*A(i, k);*/
-            
-        for (int k = i + 1; k < n; ++k)
-            for (int j = i + 1; j < n; ++j)
-                A(j, k) -= A(j, i)*A(i, k);
+    	double tmp = A(j, j);
+    	
+    	for (int k = 0; k < j; ++k)
+    		tmp -= A(j, k)*A(j, k);
+    		
+    	A(j, j) = sqrt(tmp);
+    	
+    	for (int i = j + 1; i < n; ++i)
+    	{
+    		tmp = A(i, j);
+    	
+			for (int k = 0; k < j; ++k)
+				tmp -= A(i, k)*A(j, k);
+				
+			A(i, j) = tmp/A(j, j);
+    	}
     }
 }
 
@@ -29,18 +35,18 @@ void forwardSubstitution(int n, int N, double* A, double* x, double* b)
 		float sum = b[i];
 		for (int j = 0; j < i; ++j)
 			sum -= A(i, j)*x[j];
-		x[i] = sum;
+		x[i] = sum/A(i, i);
 	}
 }
 
-// Solve Ux = b for x.
+// Solve L'x = b for x.
 void backwardSubstitution(int n, int N, double* A, double* x, double* b)
 {
 	for (int i = n - 1; i >= 0; --i)
 	{
 		float sum = b[i];
 		for (int j = i + 1; j < n; ++j)
-			sum -= A(i, j)*x[j];
+			sum -= A(j, i)*x[j];
 		x[i] = sum/A(i, i);
 	}
 }
@@ -57,7 +63,7 @@ int main(int argc, char** argv)
 	
 	auto start = high_resolution_clock::now();
 	
-	LU(n, N, A);
+	cholesky(n, N, A);
 	
 	forwardSubstitution(n, N, A, x, b);
 	backwardSubstitution(n, N, A, b, x);
@@ -65,7 +71,7 @@ int main(int argc, char** argv)
 	auto end = high_resolution_clock::now();	
 	
 	nanoseconds elapsedTime = end - start;
-	printResult(n, b, elapsedTime.count(), 2./3*n*n*n);
+	printResult(n, b, elapsedTime.count(), 1./3*n*n*n);
 	
 	delete[] A;
 	delete[] x;
