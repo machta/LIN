@@ -3,6 +3,8 @@
 .gdb_history
 results*
 lu-seq
+cholesky-seq
+gauss-seq
 
 # Compiled Object files
 *.slo
