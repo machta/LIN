@@ -4,11 +4,11 @@
 
 #define A(r, c) A[N*(c) + (r)]
 
-void cholesky(int n, int N, double* A)
+void cholesky(int n, int N, real* A)
 {
     for (int j = 0; j < n; ++j)
     {
-    	double tmp = A(j, j);
+    	real tmp = A(j, j);
     	
     	for (int k = 0; k < j; ++k)
     		tmp -= A(j, k)*A(j, k);
@@ -28,11 +28,11 @@ void cholesky(int n, int N, double* A)
 }
 
 // Solve Lx = b for x.
-void forwardSubstitution(int n, int N, double* A, double* x, double* b)
+void forwardSubstitution(int n, int N, real* A, real* x, real* b)
 {
 	for (int i = 0; i < n; ++i)
 	{
-		float sum = b[i];
+		double sum = b[i];
 		for (int j = 0; j < i; ++j)
 			sum -= A(i, j)*x[j];
 		x[i] = sum/A(i, i);
@@ -40,11 +40,11 @@ void forwardSubstitution(int n, int N, double* A, double* x, double* b)
 }
 
 // Solve L'x = b for x.
-void backwardSubstitution(int n, int N, double* A, double* x, double* b)
+void backwardSubstitution(int n, int N, real* A, real* x, real* b)
 {
 	for (int i = n - 1; i >= 0; --i)
 	{
-		float sum = b[i];
+		double sum = b[i];
 		for (int j = i + 1; j < n; ++j)
 			sum -= A(j, i)*x[j];
 		x[i] = sum/A(i, i);
@@ -55,11 +55,11 @@ int main(int argc, char** argv)
 {
     using namespace std::chrono;
 
-    double* A;
+    real* A;
     int n;
-    double* b;
+    real* b;
     int N = init(argc, argv, &n, &A, &b);
-	double* x = new double[n];
+	real* x = new real[n];
 	
 	auto start = high_resolution_clock::now();
 	

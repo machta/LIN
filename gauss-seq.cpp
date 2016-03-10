@@ -2,11 +2,11 @@
 
 #define A(r, c) A[N*(c) + (r)]
 
-void gauss(int n, int N, double* A)
+void gauss(int n, int N, real* A)
 {
     for (int i = 0; i < n - 1; ++i)
     {
-        double tmp = 1/A(i, i);
+        real tmp = 1/A(i, i);
         
         for (int j = i + 1; j < n; ++j)
             A(j, i) *= tmp;
@@ -19,11 +19,11 @@ void gauss(int n, int N, double* A)
 }
 
 // Solve Ux = b for x.
-void backwardSubstitution(int n, int N, double* A, double* x, double* b)
+void backwardSubstitution(int n, int N, real* A, real* x, real* b)
 {
 	for (int i = n - 1; i >= 0; --i)
 	{
-		float sum = b[i];
+		real sum = b[i];
 		for (int j = i + 1; j < n; ++j)
 			sum -= A(i, j)*x[j];
 		x[i] = sum/A(i, i);
@@ -34,11 +34,11 @@ int main(int argc, char** argv)
 {
     using namespace std::chrono;
 
-    double* A;
+    real* A;
     int n;
-    double* b;
+    real* b;
     int N = init(argc, argv, &n, &A, &b);
-	double* x = new double[n];
+	real* x = new real[n];
 	
 	auto start = high_resolution_clock::now();
 	
