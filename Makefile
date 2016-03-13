@@ -3,31 +3,52 @@ N = 10
 K = 5
 P = 2
 FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -D real=double $(CXXFLAGS)
+
 SERIAL_JOB = serial_job.sh
 PARALLEL_JOB = parallel_job.sh
 
-TEST = 	[ `./hon-seq < in$(1).txt 2>/dev/null | head -1` == $(2) ] &&\
-		[ `mpirun -np 1  ./hon-par < in$(1).txt 2>/dev/null | head -1` == $(2) ] &&\
-		[ `mpirun -np 3  ./hon-par < in$(1).txt 2>/dev/null | head -1` == $(2) ] &&\
-		[ `mpirun -np 4  ./hon-par < in$(1).txt 2>/dev/null | head -1` == $(2) ] &&\
-		[ `mpirun -np 16 ./hon-par < in$(1).txt 2>/dev/null | head -1` == $(2) ]
+TMP1 := $(shell mktemp)
+TMP2 := $(shell mktemp)
 
-all : lu-seq gauss-seq cholesky-seq
+COLUMN = lu-seq gauss-seq cholesky-seq
+TILED  = lu-par
+BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
+E = 0.000006 # Max allowed relative error.
+
+BIN = $(COLUMN) $(TILED) error
+
+all : $(BIN) 
 
 debug :	CXXFLAGS=-U NDEBUG -O0 -g
 debug : all
 
 test : all
-	$(call TEST,0,3)
-	$(call TEST,1,3)
-	$(call TEST,2,3)
-	$(call TEST,3,3)
-	$(call TEST,4,1)
+	for f in `find ./test -type f` ; do \
+		for t in $(COLUMN) ; do \
+			./$$t i < $$f > $(TMP2) 2>/dev/null ; \
+			cat $$f | tail -n `cat $(TMP2) | wc -l` > $(TMP1) ; \
+			[[ `cat $(TMP1) $(TMP2) | ./error 2>/dev/null` < $(E) ]] || echo Failed Test: "./$$t i < $$f" ; \
+		done ; \
+		\
+		for t in $(TILED) ; do \
+			for b in $(BLOCK_SIZES) ; do \
+				./$$t i $$b < $$f > $(TMP2) 2>/dev/null ; \
+				cat $$f | tail -n `cat $(TMP2) | wc -l` > $(TMP1) ; \
+				[[ `cat $(TMP1) $(TMP2) | ./error 2>/dev/null` < $(E) ]] || echo Failed Test: "./$$t i $$b < $$f" ; \
+			done ; \
+		done ; \
+	done
+	
+error : error.cpp
+	$(CXX) -o $@ $^ $(FLAGS)
 	
 common.o : common.cpp common.h
 	$(CXX) -c common.cpp $(FLAGS)
 	
 lu-seq : lu-seq.cpp common.o
+	$(CXX) -o $@ $^ $(FLAGS)
+	
+lu-par : lu-par.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS)
 	
 gauss-seq : gauss-seq.cpp common.o
@@ -37,5 +58,5 @@ cholesky-seq : cholesky-seq.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS)
 	
 clean :
-	rm -f lu-seq gauss-seq cholesky-seq common.o
+	rm -f $(BIN) error common.o
 

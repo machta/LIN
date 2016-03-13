@@ -1,28 +1,28 @@
 #include "common.h"
 
-#define A(r, c) A[N*(c) + (r)]
+#define A(r, c) A[n*(c) + (r)]
 
-void LU(int n, int N, real* A)
+void LU(int n, real* A)
 {
     for (int i = 0; i < n - 1; ++i)
     {
         real tmp = 1/A(i, i);
         
-        for (int j = i + 1; j < n; ++j)
-            A(j, i) *= tmp;
-        
+		for (int j = i + 1; j < n; ++j)
+			A(j, i) *= tmp;
+			
+		for (int k = i + 1; k < n; ++k)
+			for (int j = i + 1; j < n; ++j)
+				A(j, k) -= A(j, i)*A(i, k);
+				
         /*for (int j = i + 1; j < n; ++j)
             for (int k = i + 1; k < n; ++k)
                 A(j, k) -= A(j, i)*A(i, k);*/
-            
-        for (int k = i + 1; k < n; ++k)
-            for (int j = i + 1; j < n; ++j)
-                A(j, k) -= A(j, i)*A(i, k);
     }
 }
 
 // Solve Lx = b for x.
-void forwardSubstitution(int n, int N, real* A, real* x, real* b)
+void forwardSubstitution(int n, real* A, real* x, real* b)
 {
 	for (int i = 0; i < n; ++i)
 	{
@@ -34,7 +34,7 @@ void forwardSubstitution(int n, int N, real* A, real* x, real* b)
 }
 
 // Solve Ux = b for x.
-void backwardSubstitution(int n, int N, real* A, real* x, real* b)
+void backwardSubstitution(int n, real* A, real* x, real* b)
 {
 	for (int i = n - 1; i >= 0; --i)
 	{
@@ -52,17 +52,19 @@ int main(int argc, char** argv)
     real* A;
     int n;
     real* b;
-    int N = init(argc, argv, &n, &A, &b);
+    init(argc, argv, &n, &A, &b);
 	real* x = new real[n];
 	
 	auto start = high_resolution_clock::now();
 	
-	LU(n, N, A);
+	LU(n, A); auto end = high_resolution_clock::now();
 	
-	forwardSubstitution(n, N, A, x, b);
-	backwardSubstitution(n, N, A, b, x);
+	forwardSubstitution(n, A, x, b);
+	backwardSubstitution(n, A, b, x);
 	
-	auto end = high_resolution_clock::now();	
+	//auto end = high_resolution_clock::now();	
+	
+	//printMatrix(n, n, A);
 	
 	nanoseconds elapsedTime = end - start;
 	printResult(n, b, elapsedTime.count(), 2./3*n*n*n);

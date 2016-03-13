@@ -1,8 +1,8 @@
 #include "common.h"
 
-#define A(r, c) A[N*(c) + (r)]
+#define A(r, c) A[n*(c) + (r)]
 
-void gauss(int n, int N, real* A)
+void gauss(int n, real* A)
 {
     for (int i = 0; i < n - 1; ++i)
     {
@@ -19,7 +19,7 @@ void gauss(int n, int N, real* A)
 }
 
 // Solve Ux = b for x.
-void backwardSubstitution(int n, int N, real* A, real* x, real* b)
+void backwardSubstitution(int n, real* A, real* x, real* b)
 {
 	for (int i = n - 1; i >= 0; --i)
 	{
@@ -37,14 +37,14 @@ int main(int argc, char** argv)
     real* A;
     int n;
     real* b;
-    int N = init(argc, argv, &n, &A, &b);
+    init(argc, argv, &n, &A, &b);
 	real* x = new real[n];
 	
 	auto start = high_resolution_clock::now();
 	
-	gauss(n, N, A);
+	gauss(n, A);
 	
-	backwardSubstitution(n, N, A, x, b);
+	backwardSubstitution(n, A, x, b);
 	
 	auto end = high_resolution_clock::now();	
 	

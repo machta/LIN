@@ -5,6 +5,8 @@ results*
 lu-seq
 cholesky-seq
 gauss-seq
+error
+lu-par
 
 # Compiled Object files
 *.slo
