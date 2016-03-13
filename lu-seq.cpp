@@ -57,12 +57,12 @@ int main(int argc, char** argv)
 	
 	auto start = high_resolution_clock::now();
 	
-	LU(n, A); auto end = high_resolution_clock::now();
+	LU(n, A); //auto end = high_resolution_clock::now();
 	
 	forwardSubstitution(n, A, x, b);
 	backwardSubstitution(n, A, b, x);
 	
-	//auto end = high_resolution_clock::now();	
+	auto end = high_resolution_clock::now();	
 	
 	//printMatrix(n, n, A);
 	

@@ -63,11 +63,9 @@ void updateRight(int m, int n, int h, real* A)
 // B = B - C*D;
 void MMMS(int m, int n, int h, real* __restrict__ B, real* __restrict__ C, real* __restrict__ D)
 {
-
-	for (int i = 0; i < n; ++i) // col
-		
-		for (int j = 0; j < m; ++j) // row
-			for (int k = 0; k < h; ++k) // product
+	for (int k = 0; k < h; ++k) // product
+		for (int i = 0; i < n; ++i) // col
+			for (int j = 0; j < m; ++j) // row
 				B[m*i + j] -= C[m*k + j]*D[h*i + k];
 }
 
@@ -75,7 +73,7 @@ void updateDown(int n, int k, int h, real* A)
 {
 	int N = (n + k - 1)/k;
 	
-	// # for collapse(2)
+	#pragma omp parallel for collapse(2)
 	for (int i = 1; i < N; ++i)
 		for (int j = 1; j < N; ++j)
 		{
@@ -184,12 +182,12 @@ int main(int argc, char** argv)
 	
 	auto start = high_resolution_clock::now();
 	
-	LU(n, k, A); //auto end = high_resolution_clock::now();
+	LU(n, k, A); auto end = high_resolution_clock::now();
 	
 	forwardSubstitution(n, k, A, x, b);
 	backwardSubstitution(n, k, A, b, x);
 	
-	auto end = high_resolution_clock::now();	
+	//auto end = high_resolution_clock::now();	
 	
 	//printMatrix(n, k, A);
 	

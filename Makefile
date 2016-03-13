@@ -2,7 +2,7 @@ SHELL = /bin/bash
 N = 10
 K = 5
 P = 2
-FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -D real=double $(CXXFLAGS)
+FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -D real=double -fopenmp $(CXXFLAGS)
 
 SERIAL_JOB = serial_job.sh
 PARALLEL_JOB = parallel_job.sh
