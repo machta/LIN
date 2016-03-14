@@ -12,7 +12,7 @@ void factorize(int m, int n, real* AA)
     {
     	real tmp = 1/AA[n*i + i];
         
-        // # for
+        #pragma omp for
         for (int j = 0; j < M; ++j)
 		{
 			real* A = AA;
@@ -45,7 +45,7 @@ void updateRight(int m, int n, int h, real* A)
 {
 	int N = (n + m - 1)/m;
 	
-	// # for
+	#pragma omp for
 	for (int i = 1; i < N; ++i)
 	{
 		int w = std::min(m, n - i*m);
@@ -63,8 +63,8 @@ void updateRight(int m, int n, int h, real* A)
 // B = B - C*D;
 void MMMS(int m, int n, int h, real* __restrict__ B, real* __restrict__ C, real* __restrict__ D)
 {
-	for (int k = 0; k < h; ++k) // product
-		for (int i = 0; i < n; ++i) // col
+	for (int i = 0; i < n; ++i) // col
+		for (int k = 0; k < h; ++k) // product
 			for (int j = 0; j < m; ++j) // row
 				B[m*i + j] -= C[m*k + j]*D[h*i + k];
 }
@@ -73,7 +73,7 @@ void updateDown(int n, int k, int h, real* A)
 {
 	int N = (n + k - 1)/k;
 	
-	#pragma omp parallel for collapse(2)
+	#pragma omp for collapse(2)
 	for (int i = 1; i < N; ++i)
 		for (int j = 1; j < N; ++j)
 		{
@@ -93,7 +93,7 @@ void LU(int n, int k, real* A)
 {
 	int N = (n + k - 1)/k;
 	
-	// # parallel
+	#pragma omp parallel
 	for (int i = 0; i < N; ++i)
 	{
 		int w = std::min(k, n - i*k);
