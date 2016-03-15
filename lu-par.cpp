@@ -2,6 +2,10 @@
 
 #include <algorithm>
 
+#if defined USE_BLAS
+#include <cblas.h>
+#endif
+
 #define A(r, c, h) A[(h)*(c) + (r)]
 
 void factorize(int m, int n, real* AA)
@@ -63,10 +67,19 @@ void updateRight(int m, int n, int h, real* A)
 // B = B - C*D;
 void MMMS(int m, int n, int h, real* __restrict__ B, real* __restrict__ C, real* __restrict__ D)
 {
+#if defined USE_BLAS
+#if defined USE_DOUBLE
+	cblas_dgemm
+#else
+	cblas_sgemm
+#endif
+	(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, h, -1, C, m, D, h, 1, B, m);
+#else
 	for (int i = 0; i < n; ++i) // col
 		for (int k = 0; k < h; ++k) // product
 			for (int j = 0; j < m; ++j) // row
 				B[m*i + j] -= C[m*k + j]*D[h*i + k];
+#endif
 }
 
 void updateDown(int n, int k, int h, real* A)

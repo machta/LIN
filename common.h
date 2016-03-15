@@ -8,6 +8,12 @@
 #include <string>
 #include <chrono>
 
+#if defined USE_DOUBLE
+#define real double
+#else
+#define real float
+#endif
+
 inline void error(std::string msg)
 {
 	fprintf(stderr, "ERROR: %s\n", msg.c_str());
