@@ -205,7 +205,7 @@ int main(int argc, char** argv)
 	//printMatrix(n, k, A);
 	
 	nanoseconds elapsedTime = end - start;
-	printResult(n, b, elapsedTime.count(), 2./3*n*n*n);
+	printResult(n, b, elapsedTime.count(), 2./3*n*n*n, k);
 	
 	delete[] A;
 	delete[] x;

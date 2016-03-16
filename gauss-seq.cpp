@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	auto end = high_resolution_clock::now();	
 	
 	nanoseconds elapsedTime = end - start;
-	printResult(n, x, elapsedTime.count(), 2./3*n*n*n);
+	printResult(n, x, elapsedTime.count(), 2./3*n*n*n, n);
 	
 	delete[] A;
 	delete[] x;

@@ -20,7 +20,7 @@ inline void error(std::string msg)
 	exit(1);
 }
 
-void printResult(int n, real* x, long long ns, real flopCount);
+void printResult(int n, real* x, long long ns, double flopCount, int k);
 
 int init(int argc, char** argv, int* n, real** A, real** b);
 
