@@ -75,10 +75,19 @@ void MMMS(int m, int n, int h, real* __restrict__ B, real* __restrict__ C, real*
 #endif
 	(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, h, -1, C, m, D, h, 1, B, m);
 #else
-	for (int i = 0; i < n; ++i) // col
+	/*for (int i = 0; i < n; ++i) // col
 		for (int k = 0; k < h; ++k) // product
 			for (int j = 0; j < m; ++j) // row
-				B[m*i + j] -= C[m*k + j]*D[h*i + k];
+				B[m*i + j] -= C[m*k + j]*D[h*i + k];*/
+	
+	// Explicit vectorization.
+	for (int i = 0; i < n; ++i) // col
+		for (int k = 0; k < h; ++k) // product			
+		{
+			real tmp = D[h*i + k];
+			for (int j = 0; j < m; ++j) // row
+				B[m*i + j] -= C[m*k + j]*tmp;
+		}
 #endif
 }
 
