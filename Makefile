@@ -2,7 +2,7 @@ SHELL = /bin/bash
 N = 10
 K = 5
 P = 2
-FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -fopenmp $(CXXFLAGS)
+FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -fopenmp -fprofile-use $(CXXFLAGS)
 
 SERIAL_JOB = serial_job.sh
 PARALLEL_JOB = parallel_job.sh
@@ -38,6 +38,16 @@ test : all
 			done ; \
 		done ; \
 	done
+	
+prof :
+	rm -f *.gcda
+	make clean
+	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate'
+	for b in $(COLUMN) ; do \
+		export OMP_NUM_THREADS=1 ; ./$$b r 4096 256 >/dev/null ; \
+	done
+	export OMP_NUM_THREADS=1 ; ./lu-par r 8192 256 >/dev/null ;
+	make clean
 	
 error : error.cpp
 	$(CXX) -o $@ $^ $(FLAGS)
