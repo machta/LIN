@@ -42,7 +42,7 @@ test : all
 prof :
 	rm -f *.gcda
 	make clean
-	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate'
+	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate -fno-profile-use'
 	for b in $(COLUMN) ; do \
 		export OMP_NUM_THREADS=1 ; ./$$b r 4096 256 >/dev/null ; \
 	done

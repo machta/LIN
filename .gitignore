@@ -7,6 +7,7 @@ cholesky-seq
 gauss-seq
 error
 lu-par
+*.gcda
 
 # Compiled Object files
 *.slo
