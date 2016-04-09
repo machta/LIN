@@ -16,31 +16,32 @@ void factorize(int m, int n, real* AA)
     {
     	real tmp = 1/AA[n*i + i];
         
+        #pragma omp single nowait
+        {
+        	real* A = AA;
+
+			for (int l = i + 1; l < n; ++l)
+				A(l, i, n) *= tmp;
+	
+			for (int k = i + 1; k < n; ++k)
+				for (int l = i + 1; l < n; ++l)
+					A(l, k, n) -= A(l, i, n)*A(i, k, n);
+        }
+        
         #pragma omp for
-        for (int j = 0; j < M; ++j)
+        for (int j = 1; j < M; ++j)
 		{
 			real* A = AA;
-			if (j == 0)
-			{
-				for (int l = i + 1; l < n; ++l)
-					A(l, i, n) *= tmp;
 		
-				for (int k = i + 1; k < n; ++k)
-					for (int l = i + 1; l < n; ++l)
-						A(l, k, n) -= A(l, i, n)*A(i, k, n);
-			}
-			else
-			{
-				A += n*n*j;
-				int h = std::min(n, m - j*n);			
-		
+			A += n*n*j;
+			int h = std::min(n, m - j*n);			
+	
+			for (int l = 0; l < h; ++l)
+				A(l, i, h) *= tmp;
+	
+			for (int k = i + 1; k < n; ++k)
 				for (int l = 0; l < h; ++l)
-					A(l, i, h) *= tmp;
-		
-				for (int k = i + 1; k < n; ++k)
-					for (int l = 0; l < h; ++l)
-						A(l, k, h) -= A(l, i, h)*AA[n*k + i]/*A(i, k, h)*/;
-			}
+					A(l, k, h) -= A(l, i, h)*AA[n*k + i];
 		}
     }
 }

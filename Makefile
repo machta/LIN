@@ -43,7 +43,8 @@ prof :
 	rm -f *.gcda
 	make clean
 	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate -fno-profile-use'
-	for b in $(COLUMN) ; do \
+#	for b in $(COLUMN) ; do \
+	for b in lu-seq gauss-seq ; do \
 		export OMP_NUM_THREADS=1 ; ./$$b r 4096 256 >/dev/null ; \
 	done
 	export OMP_NUM_THREADS=1 ; ./lu-par r 8192 256 >/dev/null ;
