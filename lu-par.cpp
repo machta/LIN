@@ -50,9 +50,24 @@ void updateRight(int m, int n, int h, real* A)
 {
 	int N = (n + m - 1)/m;
 	
-	#pragma omp for
-	for (int i = 1; i < N; ++i)
+	#pragma omp for nowait
+	for (int i = 1; i < N - 1; ++i)
 	{
+		real* B = A + h*m*i;
+		
+		for (int j = 0; j < m; ++j)
+		{
+			for (int k = 0; k < m - 1; ++k)
+				for (int l = k + 1; l < m; ++l)
+					B[m*j + l] -= B[m*j + k]*A(l, k, m);
+		}
+	}
+	
+	#pragma omp single
+    if (N > 1)
+    {
+	    int i = N - 1;
+
 		int w = std::min(m, n - i*m);
 		real* B = A + h*m*i - (m - w)*(h - n);
 		
