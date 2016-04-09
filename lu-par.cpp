@@ -110,7 +110,6 @@ void updateDown(int n, int k, int h, real* A)
 		}
 }
 
-// run i 4 < test/test10.txt
 void LU(int n, int k, real* A)
 {
 	int N = (n + k - 1)/k;
