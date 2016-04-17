@@ -2,8 +2,8 @@ SHELL = /bin/bash
 FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -fopenmp -fprofile-use $(CXXFLAGS)
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
-SIMPLE = lu-seq
-BLOCK  = lu-par lu-tile
+SIMPLE = lu-seq lu-sca-seq
+BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile
 BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
 E = 0.000006 # Max allowed relative error.
 BIN = $(SIMPLE) $(BLOCK) error
@@ -57,6 +57,15 @@ lu-par : lu-par.cpp common.o
 
 lu-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS)
+	
+lu-sca-seq : lu-seq.cpp common.o
+	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
+	
+lu-sca-par : lu-par.cpp common.o
+	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
+
+lu-sca-tile : lu-tile.cpp common.o
+	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
 
 clean :
 	rm -f $(BIN) error common.o

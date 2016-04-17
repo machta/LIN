@@ -2,11 +2,13 @@
 *~
 .gdb_history
 results*
-lu-seq
-cholesky-seq
-gauss-seq
 error
+lu-seq
 lu-par
+lu-tile
+lu-sca-seq
+lu-sca-par
+lu-sca-tile
 *.gcda
 
 # Compiled Object files
