@@ -52,17 +52,15 @@ int main(int argc, char** argv)
     real* A;
     int n;
     real* b;
-    init(argc, argv, &n, &A, &b);
+    init(argc, argv, &n, &A, &b, false);
 	real* x = new real[n];
 	
 	auto start = high_resolution_clock::now();
-	
-	LU(n, A); //auto end = high_resolution_clock::now();
+	LU(n, A);
+	auto end = high_resolution_clock::now();
 	
 	forwardSubstitution(n, A, x, b);
-	backwardSubstitution(n, A, b, x);
-	
-	auto end = high_resolution_clock::now();	
+	backwardSubstitution(n, A, b, x);	
 	
 	//printMatrix(n, n, A);
 	

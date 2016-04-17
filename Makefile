@@ -1,21 +1,12 @@
 SHELL = /bin/bash
-N = 10
-K = 5
-P = 2
 FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -fopenmp -fprofile-use $(CXXFLAGS)
-
-SERIAL_JOB = serial_job.sh
-PARALLEL_JOB = parallel_job.sh
-
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
-
-COLUMN = lu-seq gauss-seq cholesky-seq
-TILED  = lu-par
+SIMPLE = lu-seq
+BLOCK  = lu-par lu-tile
 BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
 E = 0.000006 # Max allowed relative error.
-
-BIN = $(COLUMN) $(TILED) error
+BIN = $(SIMPLE) $(BLOCK) error
 
 all : $(BIN) 
 
@@ -24,13 +15,13 @@ debug : all
 
 test : all
 	for f in `find ./test -type f` ; do \
-		for t in $(COLUMN) ; do \
+		for t in $(SIMPLE) ; do \
 			./$$t i < $$f > $(TMP2) 2>/dev/null ; \
 			cat $$f | tail -n `cat $(TMP2) | wc -l` > $(TMP1) ; \
 			[[ `cat $(TMP1) $(TMP2) | ./error 2>/dev/null` < $(E) ]] || echo Failed Test: "./$$t i < $$f" ; \
 		done ; \
 		\
-		for t in $(TILED) ; do \
+		for t in $(BLOCK) ; do \
 			for b in $(BLOCK_SIZES) ; do \
 				./$$t i $$b < $$f > $(TMP2) 2>/dev/null ; \
 				cat $$f | tail -n `cat $(TMP2) | wc -l` > $(TMP1) ; \
@@ -39,14 +30,17 @@ test : all
 		done ; \
 	done
 	
-prof :
+prof : 
 	rm -f *.gcda
 	make clean
 	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate -fno-profile-use'
-	for b in $(COLUMN) ; do \
-		export OMP_NUM_THREADS=1 ; ./$$b r 4096 256 >/dev/null ; \
-	done
-	export OMP_NUM_THREADS=1 ; ./lu-par r 8192 256 >/dev/null ;
+	for t in $(BLOCK) ; do \
+		for b in 64 128 256 ; do \
+			for n in 1024 2048 4096 ; do \
+				export OMP_NUM_THREADS=1 ; ./$$t r $$n $$b >/dev/null ; \
+			done ; \
+		done ; \
+	done ; \
 	make clean
 	
 error : error.cpp
@@ -60,13 +54,10 @@ lu-seq : lu-seq.cpp common.o
 	
 lu-par : lu-par.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS)
-	
-gauss-seq : gauss-seq.cpp common.o
+
+lu-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS)
-	
-cholesky-seq : cholesky-seq.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS)
-	
+
 clean :
 	rm -f $(BIN) error common.o
 

@@ -76,7 +76,7 @@ void initRandom(int n, int k, real* A, real* b)
 
 } // namespace
 
-int init(int argc, char** argv, int* n, real** A, real** b)
+int init(int argc, char** argv, int* n, real** A, real** b, bool tiled)
 {
 	if (argc < 2)
 		error("not enough parameters.");
@@ -95,7 +95,7 @@ int init(int argc, char** argv, int* n, real** A, real** b)
 		}
 		
 		alloc(*n, A, b);
-		initFromInput(*n, k, *A, *b);
+		initFromInput(*n, tiled ? k : *n, *A, *b);
 	}
 	else if (argv[1][0] == 'r')
 	{
@@ -111,7 +111,7 @@ int init(int argc, char** argv, int* n, real** A, real** b)
 		}
 		
 		alloc(*n, A, b);
-		initRandom(*n, k, *A, *b);
+		initRandom(*n, tiled ? k : *n, *A, *b);
 	}
 	else
 	{

@@ -22,7 +22,7 @@ inline void error(std::string msg)
 
 void printResult(int n, real* x, long long ns, double flopCount, int k);
 
-int init(int argc, char** argv, int* n, real** A, real** b);
+int init(int argc, char** argv, int* n, real** A, real** b, bool tiled);
 
 void column2Tiled(int *r, int *c, int n, int k);
 
