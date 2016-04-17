@@ -43,6 +43,9 @@ prof :
 	done ; \
 	make clean
 	
+gnuplot :
+	gnuplot gnuplot*.txt
+	
 error : error.cpp
 	$(CXX) -o $@ $^ $(FLAGS)
 	
@@ -68,5 +71,5 @@ lu-sca-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
 
 clean :
-	rm -f $(BIN) error common.o
+	rm -f $(BIN) error common.o gnuplot-*.txt
 
