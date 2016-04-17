@@ -43,10 +43,10 @@ prof :
 	done ; \
 	make clean
 
-jobs : 
+.PHONY:jobs
+jobs :
 	ls jobs/*.sh | xargs -n1 qsub 
 
-	
 gnuplot :
 	gnuplot gnuplot*.txt
 	
