@@ -42,7 +42,10 @@ prof :
 		done ; \
 	done ; \
 	make clean
-	
+
+jobs : 
+	ls jobs/*.sh | xargs -n1 qsub 
+
 error : error.cpp
 	$(CXX) -o $@ $^ $(FLAGS)
 	
