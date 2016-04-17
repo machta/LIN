@@ -42,6 +42,10 @@ prof :
 		done ; \
 	done ; \
 	make clean
+
+jobs : 
+	ls jobs/*.sh | xargs -n1 qsub 
+
 	
 gnuplot :
 	gnuplot gnuplot*.txt
