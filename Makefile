@@ -48,7 +48,8 @@ jobs :
 	ls jobs/*.sh | xargs -n1 qsub 
 
 gnuplot :
-	gnuplot gnuplot*.txt
+	gnuplot gnuplot-speedup.txt gnuplot-block.txt gnuplot-sequential.txt
+	gnuplot gnuplot-speedup-phi.txt #gnuplot-block-phi.txt
 	
 error : error.cpp
 	$(CXX) -o $@ $^ $(FLAGS)
