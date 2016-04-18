@@ -8,5 +8,5 @@ set key top left
 
 plot "res-lu-sca-par-block.txt" using 2:5 with lp title "lu-sca-par",\
      "res-lu-sca-tile-block.txt" using 2:5 with lp title "lu-sca-tile",\
-     "res-lu-tile-block.txt" using 2:5 with lp title "lu-tile-block",\
+     "res-lu-tile-block.txt" using 2:5 with lp title "lu-tile",\
      "res-lu-par-block.txt" using 2:5 with lp title "lu-par"

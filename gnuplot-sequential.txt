@@ -8,6 +8,6 @@ set key center right
 
 plot "res-lu-sca-par-sequential.txt" using 1:5 with lp title "lu-sca-par",\
      "res-lu-sca-tile-sequential.txt" using 1:5 with lp title "lu-sca-tile",\
-     "res-lu-tile-sequential.txt" using 1:5 with lp title "lu-tile-block",\
+     "res-lu-tile-sequential.txt" using 1:5 with lp title "lu-tile",\
      "res-lu-par-sequential.txt" using 1:5 with lp title "lu-par",\
      "res-lu-seq-sequential.txt" using 1:5 with lp title "lu-seq"

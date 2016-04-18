@@ -76,5 +76,5 @@ lu-sca-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
 
 clean :
-	rm -f $(BIN) error common.o gnuplot-*.txt
+	rm -f $(BIN) error common.o *.jpg
 
