@@ -1,7 +1,7 @@
 export LD_LIBRARY_PATH=~/lib
 
-./phi-8x.sh
-./phi-16x.sh
-./phi-24x.sh
-./phi-block.sh
+./xeon-8x.sh
+./xeon-16x.sh
+./xeon-24x.sh
+./xeon-block.sh
 ./xeon-vector.sh
