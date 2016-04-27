@@ -43,14 +43,19 @@ prof :
 	done ; \
 	make clean
 
-.PHONY:jobs
+.PHONY : jobs
 jobs :
 	ls jobs/*.sh | xargs -n1 qsub 
 
+.PHONY : gnuplot
 gnuplot :
 	gnuplot gnuplot-speedup.txt gnuplot-block.txt gnuplot-sequential.txt
 	gnuplot gnuplot-speedup-phi.txt #gnuplot-block-phi.txt
 	
+.PHONY : xeon
+xeon :
+	make CXX=icc CXXFLAGS='-mmic -vec-report'
+
 error : error.cpp
 	$(CXX) -o $@ $^ $(FLAGS)
 	
