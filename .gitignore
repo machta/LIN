@@ -12,6 +12,7 @@ lu-sca-tile
 res*
 *.jpg
 graphs.zip
+*.optrpt
 
 # Compiled Object files
 *.slo

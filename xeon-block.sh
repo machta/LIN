@@ -1,19 +1,34 @@
 #!/bin/bash
 N=$((16*1024))
 
-RES=res-lu-tile-xeon-block.txt
-./lu-tile r $N 16 >/dev/null 2>$RES
-./lu-tile r $N 32 >/dev/null 2>>$RES
-./lu-tile r $N 64 >/dev/null 2>>$RES
-./lu-tile r $N 128 >/dev/null 2>>$RES 
-./lu-tile r $N 256 >/dev/null 2>>$RES
-./lu-tile r $N 512 >/dev/null 2>>$RES
+#RES=res-lu-tile-xeon-block.txt
+#rm $RES
 
-RES=res-lu-par-xeon-block.txt
-./lu-par r $N 16 >/dev/null 2>$RES
-./lu-par r $N 32 >/dev/null 2>>$RES
-./lu-par r $N 64 >/dev/null 2>>$RES
-./lu-par r $N 128 >/dev/null 2>>$RES 
-./lu-par r $N 256 >/dev/null 2>>$RES
-./lu-par r $N 512 >/dev/null 2>>$RES
+#for b in 16 32 64 128 256 512
+#do
+#	./lu-tile r $N $b 2>&1 >/dev/null | tee -a $RES
+#done
 
+#RES=res-lu-par-xeon-block.txt
+#rm $RES
+
+#for b in 16 32 64 128 256 512 1024 2048
+#do
+#        ./lu-par r $N $b 2>&1 >/dev/null | tee -a $RES
+#done
+
+RES=res-lu-sca-tile-xeon-block.txt
+rm $RES
+
+for b in 16 32 64 128 256 512 
+do
+	./lu-sca-tile r $N $b 2>&1 >/dev/null | tee -a $RES
+done
+
+RES=res-lu-sca-par-xeon-block.txt
+rm $RES
+
+for b in 16 32 64 128 256 512 1024 2048
+do
+	./lu-sca-par r $N $b 2>&1 >/dev/null | tee -a $RES
+done
