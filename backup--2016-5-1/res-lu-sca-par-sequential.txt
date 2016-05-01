@@ -1,0 +1,22 @@
+#   n block thread         seconds          GFLOPS
+ 1024   128      1        0.340947        2.099527
+#   n block thread         seconds          GFLOPS
+ 2048   128      1        2.714987        2.109263
+#   n block thread         seconds          GFLOPS
+ 3072   128      1        9.092259        2.125693
+#   n block thread         seconds          GFLOPS
+ 4096   128      1       21.713253        2.109909
+#   n block thread         seconds          GFLOPS
+ 5120   128      1       42.251411        2.117763
+#   n block thread         seconds          GFLOPS
+ 6144   128      1       72.938426        2.119854
+#   n block thread         seconds          GFLOPS
+ 7168   128      1      114.532941        2.143741
+#   n block thread         seconds          GFLOPS
+ 8192   128      1      170.601977        2.148298
+#   n block thread         seconds          GFLOPS
+ 9216   128      1      243.916583        2.139414
+#   n block thread         seconds          GFLOPS
+10240   128      1      337.333295        2.122020
+#   n block thread         seconds          GFLOPS
+12288   128      1      581.956312        2.125504
