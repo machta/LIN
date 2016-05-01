@@ -1,0 +1,12 @@
+set terminal jpeg
+set output "speedup-tile-xeon.jpg"
+
+#set logscale x 2
+set xlabel "threads"
+set ylabel "GFLOPS"
+set key bottom right
+
+plot "res/res-lu-tile-xeon-24x.txt" using 3:5 with lp title "lu-tile N=24K",\
+     "res/res-lu-tile-xeon-16x.txt" using 3:5 with lp title "lu-tile N=16K",\
+     "res/res-lu-tile-xeon-8x.txt" using 3:5 with lp title "lu-tile N=8K"
+

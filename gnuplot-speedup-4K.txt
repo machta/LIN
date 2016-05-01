@@ -1,0 +1,12 @@
+set terminal jpeg
+set output "speedup-4K.jpg"
+
+#set logscale x 2
+set xlabel "threads"
+set ylabel "GFLOPS"
+set key right bottom
+
+plot "res/res-lu-tile-4x.txt" using 3:5 with lp title "lu-tile",\
+     "res/res-lu-par-4x.txt" using 3:5 with lp title "lu-par"
+
+     

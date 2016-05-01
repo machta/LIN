@@ -8,11 +8,14 @@ BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
 E = 0.000006 # Max allowed relative error.
 BIN = $(SIMPLE) $(BLOCK) error
 
-all : $(BIN) 
+.PHONY : all
+all : $(BIN)
 
+.PHONY : debug
 debug :	CXXFLAGS=-U NDEBUG -O0 -g
 debug : all
 
+.PHONY : test
 test : all
 	for f in `find ./test -type f` ; do \
 		for t in $(SIMPLE) ; do \
@@ -30,7 +33,8 @@ test : all
 		done ; \
 	done
 	
-prof : 
+.PHONY : prof
+prof :
 	rm -f *.gcda
 	make clean
 	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate -fno-profile-use'
@@ -49,8 +53,8 @@ jobs :
 
 .PHONY : gnuplot
 gnuplot :
-	gnuplot gnuplot-speedup.txt gnuplot-block.txt gnuplot-sequential.txt
-	gnuplot gnuplot-speedup-phi.txt #gnuplot-block-phi.txt
+	ls gnuplot-*.txt | xargs -n1 gnuplot
+	zip -q graphs.zip *.jpg
 	
 .PHONY : xeon
 xeon :
@@ -80,6 +84,7 @@ lu-sca-par : lu-par.cpp common.o
 lu-sca-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
 
+.PHONY : clean
 clean :
-	rm -f $(BIN) error common.o *.jpg
+	rm -f $(BIN) error common.o *.jpg graphs.zip
 

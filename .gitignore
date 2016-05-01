@@ -1,7 +1,6 @@
-#added by me
+# Added by me
 *~
 .gdb_history
-results*
 error
 lu-seq
 lu-par
@@ -10,6 +9,9 @@ lu-sca-seq
 lu-sca-par
 lu-sca-tile
 *.gcda
+res*
+*.jpg
+graphs.zip
 
 # Compiled Object files
 *.slo

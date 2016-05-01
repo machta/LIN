@@ -6,7 +6,8 @@ set xlabel "block size"
 set ylabel "GFLOPS"
 set key top left
 
-plot "res-lu-sca-par-block.txt" using 2:5 with lp title "lu-sca-par",\
-     "res-lu-sca-tile-block.txt" using 2:5 with lp title "lu-sca-tile",\
-     "res-lu-tile-block.txt" using 2:5 with lp title "lu-tile",\
-     "res-lu-par-block.txt" using 2:5 with lp title "lu-par"
+plot "res/res-lu-tile-block.txt" using 2:5 with lp title "lu-tile",\
+     "res/res-lu-par-block.txt" using 2:5 with lp title "lu-par",\
+     "res/res-lu-sca-tile-block.txt" using 2:5 with lp title "lu-sca-tile",\
+     "res/res-lu-sca-par-block.txt" using 2:5 with lp title "lu-sca-par"
+     
