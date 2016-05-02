@@ -41,7 +41,9 @@ int vyprazdni(int *temp,int k)
 //!! beginning of part for modification
 void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restrict__ outX, int n, int m)
 {
-	/*#pragma omp parallel for
+	/*
+	// first version
+	#pragma omp parallel for
 	for(int k = 0; k < m; k++)
 	{
 		for(int i = n - 1; i >= 0; i--)
@@ -54,28 +56,32 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 			outX[k + i*m] = s/inA[i*n + i];
 		}
 	}*/
-	
-	
-	
-	#pragma omp parallel for
-	for(int k = 0; k < m; k++)
+		
+	// version with transposition
+	#pragma omp parallel
 	{
 		float* tmpX = new float[n];
-	
-		for(int i = n - 1; i >= 0; i--)
+		
+		#pragma omp for
+		for(int k = 0; k < m; k++)
 		{
-			float s = inB[k + i*m];
-			for(int j = i + 1; j < n; j++)
+			for(int i = n - 1; i >= 0; i--)
 			{
-				s -= inA[i*n + j]*tmpX[j];
-			} 
-			outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
+				float s = inB[k + i*m];
+				for(int j = i + 1; j < n; j++)
+				{
+					s -= inA[i*n + j]*tmpX[j];
+				} 
+				outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
+			}
 		}
 		
 		delete[] tmpX;
 	}
 	
-	/*for(int i = n - 1; i >= 0; i--)
+	/*
+	// gives wrong results
+	for(int i = n - 1; i >= 0; i--)
 	{
 		for(int k = 0; k < m; k++)
 			outX[k + i*m] = inB[k + i*m];
