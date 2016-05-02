@@ -39,7 +39,8 @@ int vyprazdni(int *temp,int k)
 
 //!! zacatek casti k modifikaci
 //!! beginning of part for modification
-void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restrict__ outX, int n, int m)
+void Gauss_BS(const float* const __restrict__ inA, const float* const __restrict__ inB,
+	float* const __restrict__ outX, int n, int m)
 {
 	/*
 	// first version
@@ -57,7 +58,7 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 		}
 	}*/
 	
-	/*
+	
 	// version with transposition
 	#pragma omp parallel
 	{
@@ -78,11 +79,11 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 		}
 		
 		delete[] tmpX;
-	}*/
+	}
 	
 	/*
-	// simplified version
-		#pragma omp parallel for
+	// simplified version with transposition
+	#pragma omp parallel for
 	for(int k = 0; k < m; k++)
 	{
 		float* tmpX = new float[n];
@@ -99,7 +100,9 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 		
 		delete[] tmpX;
 	}*/
-	
+
+	/*
+	// weird version
 	int gcd;
 	{
 		int a = m, b = omp_get_max_threads(), tmp;
@@ -134,7 +137,7 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 		}
 		
 		delete[] tmpX;
-	}
+	}*/
 }
 //!! end of part for modification
 //!! konec casti k modifikaci
