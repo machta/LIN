@@ -13,6 +13,8 @@ res*
 *.jpg
 *.optrpt
 graphs
+*.sh.*
+kratka-1/main
 
 # Compiled Object files
 *.slo
