@@ -1,5 +1,5 @@
 set terminal jpeg
-set output "speedup-12K.jpg"
+set output "graphs/x86/speedup-12K.jpg"
 
 #set logscale x 2
 set xlabel "threads"

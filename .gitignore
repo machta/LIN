@@ -11,8 +11,8 @@ lu-sca-tile
 *.gcda
 res*
 *.jpg
-graphs.zip
 *.optrpt
+graphs
 
 # Compiled Object files
 *.slo

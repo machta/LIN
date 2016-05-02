@@ -1,5 +1,5 @@
 set terminal jpeg
-set output "vector-xeon.jpg"
+set output "graphs/xeon/vector-xeon.jpg"
 
 #set logscale x 2
 set xlabel "N"

@@ -1,5 +1,5 @@
 set terminal jpeg
-set output "block.jpg"
+set output "graphs/x86/block.jpg"
 
 set logscale x 2
 set xlabel "block size"

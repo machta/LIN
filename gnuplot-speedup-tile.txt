@@ -1,5 +1,5 @@
 set terminal jpeg
-set output "speedup-tile.jpg"
+set output "graphs/x86/speedup-tile.jpg"
 
 #set logscale x 2
 set xlabel "threads"

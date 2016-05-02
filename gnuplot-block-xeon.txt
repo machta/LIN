@@ -1,5 +1,5 @@
 set terminal jpeg
-set output "block-xeon.jpg"
+set output "graphs/xeon/block-xeon.jpg"
 
 set logscale x 2
 set xlabel "block size"

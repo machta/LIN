@@ -53,8 +53,10 @@ jobs :
 
 .PHONY : gnuplot
 gnuplot :
+	mkdir -p graphs
+	mkdir -p graphs/x86
+	mkdir -p graphs/xeon
 	ls gnuplot-*.txt | xargs -n1 gnuplot
-	zip -q graphs.zip *.jpg
 	
 .PHONY : xeon
 xeon :
@@ -86,5 +88,6 @@ lu-sca-tile : lu-tile.cpp common.o
 
 .PHONY : clean
 clean :
-	rm -f $(BIN) error common.o *.jpg graphs.zip
+	rm -f $(BIN) error common.o *.jpg
+	rm -r graphs
 
