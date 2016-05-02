@@ -55,23 +55,25 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 		}
 	}*/
 	
-	float* tmpX = new float[n*m];
+	
 	
 	#pragma omp parallel for
 	for(int k = 0; k < m; k++)
 	{
+		float* tmpX = new float[n];
+	
 		for(int i = n - 1; i >= 0; i--)
 		{
 			float s = inB[k + i*m];
 			for(int j = i + 1; j < n; j++)
 			{
-				s -= inA[i*n + j]*tmpX[j + k*m];
+				s -= inA[i*n + j]*tmpX[j];
 			} 
-			outX[k + i*m] = tmpX[i + k*m] = s/inA[i*n + i];
+			outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
 		}
+		
+		delete[] tmpX;
 	}
-	
-	delete[] tmpX;
 	
 	/*for(int i = n - 1; i >= 0; i--)
 	{
