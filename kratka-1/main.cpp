@@ -56,7 +56,8 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 			outX[k + i*m] = s/inA[i*n + i];
 		}
 	}*/
-		
+	
+	/*
 	// version with transposition
 	#pragma omp parallel
 	{
@@ -77,25 +78,63 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 		}
 		
 		delete[] tmpX;
-	}
-	
-	/*
-	// gives wrong results
-	for(int i = n - 1; i >= 0; i--)
-	{
-		for(int k = 0; k < m; k++)
-			outX[k + i*m] = inB[k + i*m];
-	
-		for(int j = i + 1; j < n; j++)
-		{
-			for(int k = 0; k < m; k++)
-				outX[k + i*m] -= inA[i*n + j]*outX[k + j*m];
-		}
-		
-		for(int k = 0; k < m; k++)
-			outX[k + i*m] /= inA[i*n + i];   
 	}*/
 	
+	/*
+	// simplified version
+		#pragma omp parallel for
+	for(int k = 0; k < m; k++)
+	{
+		float* tmpX = new float[n];
+	
+		for(int i = n - 1; i >= 0; i--)
+		{
+			float s = inB[k + i*m];
+			for(int j = i + 1; j < n; j++)
+			{
+				s -= inA[i*n + j]*tmpX[j];
+			} 
+			outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
+		}
+		
+		delete[] tmpX;
+	}*/
+	
+	int gcd;
+	{
+		int a = m, b = omp_get_max_threads(), tmp;
+		while (b != 0)
+		{
+			tmp = a % b;
+
+			a = b;
+			b = tmp;
+		}
+		gcd = a;
+	}
+	//printf("gcd = %d\n", gcd);
+	
+	#pragma omp parallel num_threads(gcd)
+	{
+		float* tmpX = new float[n];
+		
+		#pragma omp for
+		for(int k = 0; k < m; k++)
+		{
+			for(int i = n - 1; i >= 0; i--)
+			{
+				float s = inB[k + i*m];
+				#pragma omp parallel for reduction(-:s) num_threads(omp_get_max_threads()/gcd)
+				for(int j = i + 1; j < n; j++)
+				{
+					s -= inA[i*n + j]*tmpX[j];
+				} 
+				outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
+			}
+		}
+		
+		delete[] tmpX;
+	}
 }
 //!! end of part for modification
 //!! konec casti k modifikaci
