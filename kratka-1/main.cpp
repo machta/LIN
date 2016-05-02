@@ -41,7 +41,7 @@ int vyprazdni(int *temp,int k)
 //!! beginning of part for modification
 void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restrict__ outX, int n, int m)
 {
-	#pragma omp parallel for
+	/*#pragma omp parallel for
 	for(int k = 0; k < m; k++)
 	{
 		for(int i = n - 1; i >= 0; i--)
@@ -53,7 +53,25 @@ void Gauss_BS(float* __restrict__ inA, float* __restrict__ inB, float* __restric
 			} 
 			outX[k + i*m] = s/inA[i*n + i];
 		}
+	}*/
+	
+	float* tmpX = new float[n*m];
+	
+	#pragma omp parallel for
+	for(int k = 0; k < m; k++)
+	{
+		for(int i = n - 1; i >= 0; i--)
+		{
+			float s = inB[k + i*m];
+			for(int j = i + 1; j < n; j++)
+			{
+				s -= inA[i*n + j]*tmpX[j + k*m];
+			} 
+			outX[k + i*m] = tmpX[i + k*m] = s/inA[i*n + i];
+		}
 	}
+	
+	delete[] tmpX;
 	
 	/*for(int i = n - 1; i >= 0; i--)
 	{
