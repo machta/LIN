@@ -58,7 +58,7 @@ void Gauss_BS(const float* const __restrict__ inA, const float* const __restrict
 		}
 	}*/
 	
-	
+	/*
 	// version with transposition
 	#pragma omp parallel
 	{
@@ -79,7 +79,7 @@ void Gauss_BS(const float* const __restrict__ inA, const float* const __restrict
 		}
 		
 		delete[] tmpX;
-	}
+	}*/
 	
 	/*
 	// simplified version with transposition
@@ -101,6 +101,53 @@ void Gauss_BS(const float* const __restrict__ inA, const float* const __restrict
 		delete[] tmpX;
 	}*/
 
+	
+	/*// simplified version with transposition and optimized allocation
+	float* X = new float[n*omp_get_max_threads()];
+	
+	#pragma omp parallel for
+	for(int k = 0; k < m; k++)
+	{
+		float* tmpX = X + n*omp_get_thread_num();
+	
+		for(int i = n - 1; i >= 0; i--)
+		{
+			float s = inB[k + i*m];
+			for(int j = i + 1; j < n; j++)
+			{
+				s -= inA[i*n + j]*tmpX[j];
+			} 
+			outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
+		}
+	}
+	
+	delete[] X;*/
+	
+	// simplified version with transposition and optimized allocation #2
+	float** X = new float*[omp_get_max_threads()];
+	for (int i = 0; i < omp_get_max_threads(); i++)
+		X[i] = new float[n];
+	
+	#pragma omp parallel for
+	for(int k = 0; k < m; k++)
+	{
+		float* tmpX = X[omp_get_thread_num()];
+	
+		for(int i = n - 1; i >= 0; i--)
+		{
+			float s = inB[k + i*m];
+			for(int j = i + 1; j < n; j++)
+			{
+				s -= inA[i*n + j]*tmpX[j];
+			} 
+			outX[k + i*m] = tmpX[i] = s/inA[i*n + i];
+		}
+	}
+	
+	for (int i = 0; i < omp_get_max_threads(); i++)
+		delete[] X[i];
+	delete[] X;
+	
 	/*
 	// weird version
 	int gcd;
