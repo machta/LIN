@@ -1,0 +1,13 @@
+set terminal jpeg
+set output "graphs/x86/block-12x.jpg"
+
+set logscale x 2
+set xlabel "block size"
+set ylabel "GFLOPS"
+set key top left
+
+plot "res/res-lu-tile-block-12x.txt" using 2:5 with lp title "lu-tile",\
+     "res/res-lu-par-block-12x.txt" using 2:5 with lp title "lu-par",\
+     "res/res-lu-sca-tile-block-12x.txt" using 2:5 with lp title "lu-sca-tile",\
+     "res/res-lu-sca-par-block-12x.txt" using 2:5 with lp title "lu-sca-par"
+     
