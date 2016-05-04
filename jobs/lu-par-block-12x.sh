@@ -30,9 +30,17 @@
 # Do not change.
 #$ -q gpu_long.q
 
-rm res-lu-sca-par-block.txt
+P=lu-par
+T=12
+
+RES="res-$p-xeon-block-"$t"x.txt"
+N=$((8*1024))
+
+rm $RES
 
 for b in 8 16 `seq 32 32 256` `seq $((256+64)) 64 1024` 2048
 do
-	./lu-sca-par r $((1024*8)) $b 2>&1 >/dev/null | tee -a res-lu-sca-par-block.txt
+	export OMP_NUM_THREADS=$T
+	./$P r $N $b 2>&1 >/dev/null | tee -a $RES
 done
+
