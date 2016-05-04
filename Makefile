@@ -89,5 +89,5 @@ lu-sca-tile : lu-tile.cpp common.o
 .PHONY : clean
 clean :
 	rm -f $(BIN) error common.o *.jpg
-	rm -r graphs
+	rm -fr graphs
 
