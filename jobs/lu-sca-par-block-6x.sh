@@ -33,7 +33,7 @@
 P=lu-sca-par
 T=6
 
-RES="res-$p-xeon-block-"$t"x.txt"
+RES="res-$P-block-"$T"x.txt"
 N=$((8*1024))
 
 rm $RES
