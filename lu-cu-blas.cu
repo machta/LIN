@@ -7,6 +7,17 @@
 #define A(r, c, h) A[(h)*(c) + (r)]
 //#define A(r, c) A[n*(c) + (r)]
 
+#define HANDLE_ERROR(err) HandleError(err, __FILE__, __LINE__)
+
+void HandleError(cudaError_t err, const char* file, int line)
+{
+	if (err != cudaSuccess)
+	{
+		fprintf(stderr, "ERROR: %s in %s at line %d\n", cudaGetErrorString(err), file, line);
+		exit(1);
+	}
+}
+
 // Solve Lx = b for x.
 void forwardSubstitution(int n, real* A, real* x, real* b)
 {
@@ -41,51 +52,41 @@ int main(int argc, char** argv)
     int k = init(argc, argv, &n, &A, &b, false);
 	real* x = new real[n];
 	
-	cudaError_t error;
 	float* Ad;
+	float** array;
 	int* infod;
-	int* pivotd;
-	error = cudaMalloc((void**) &Ad, n*n*sizeof(real));
-	error = cudaMalloc((void**) &infod, sizeof(int));
-	error = cudaMalloc((void**) &pivotd, n*sizeof(int));
+	HANDLE_ERROR(cudaMalloc(&Ad, n*n*sizeof(float)));
+	HANDLE_ERROR(cudaMalloc(&array, sizeof(float*)));
+	HANDLE_ERROR(cudaMalloc(&infod, sizeof(int)));
 	
-	cublasStatus_t stat;
 	cublasHandle_t handle;
-	stat = cublasCreate(&handle);
+	cublasCreate(&handle);
 	
-	printMatrix(n, n, A);
+	//printMatrix(n, n, A);
 	
 	auto start = high_resolution_clock::now();
-	error = cudaMemcpy(Ad, A, n*n*sizeof(real), cudaMemcpyHostToDevice);
 	
-	//for (int i = 0; i < n*n; i++) A[i] = 0;
+	HANDLE_ERROR(cudaMemcpy(Ad, A, n*n*sizeof(float), cudaMemcpyHostToDevice));
+	HANDLE_ERROR(cudaMemcpy(array, &Ad, sizeof(float*), cudaMemcpyHostToDevice));
+
+	cublasSgetrfBatched(handle, n, array, n, nullptr, infod, 1);
 	
-	printMatrix(n, n, A);
+	HANDLE_ERROR(cudaMemcpy(A, Ad, n*n*sizeof(float), cudaMemcpyDeviceToHost));
 	
-	stat = cublasSgetrfBatched(handle, n, &Ad, n, pivotd, infod, 1);
-	
-	cudaMemcpy(A, Ad, n*n*sizeof(real), cudaMemcpyDeviceToHost);
-	int info = -1000000;
-	printf("info = %d\n", info);
-	cudaMemcpy(&info, infod, sizeof(int), cudaMemcpyDeviceToHost);
-	printf("info = %d\n", info);
-	int* pivot = new int[n];
-	cudaMemcpy(pivot, pivotd, n*sizeof(int), cudaMemcpyDeviceToHost);
 	auto end = high_resolution_clock::now();
 	
 	forwardSubstitution(n, A, x, b);
 	backwardSubstitution(n, A, b, x);
 	
-	printMatrix(n, n, A);
+	//printMatrix(n, n, A);
 	
 	nanoseconds elapsedTime = end - start;
 	printResult(n, b, elapsedTime.count(), 2./3*n*n*n, k, 1024);
 	
 	cublasDestroy(handle);
-	cudaFree(Ad);
-	cudaFree(infod);
-	cudaFree(pivotd);
-	delete[] pivot;
+	HANDLE_ERROR(cudaFree(Ad));
+	HANDLE_ERROR(cudaFree(array));
+	HANDLE_ERROR(cudaFree(infod));
 	delete[] A;
 	delete[] x;
 	return 0;

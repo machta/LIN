@@ -4,7 +4,7 @@ CFLAGS = -pedantic -Wall -Ofast -march=native -fopenmp -fprofile-use $(FLAGS)
 NVFLAGS = -O3 -lcublas $(FLAGS)
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
-SIMPLE = lu-seq lu-sca-seq
+SIMPLE = lu-seq lu-sca-seq lu-cu-blas
 BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile
 BIN = $(SIMPLE) $(BLOCK) error
 BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
