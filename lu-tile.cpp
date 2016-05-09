@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include <omp.h>
+
 #if defined USE_BLAS
 #include <cblas.h>
 #endif
@@ -211,7 +213,7 @@ int main(int argc, char** argv)
 	//printMatrix(n, k, A);
 	
 	nanoseconds elapsedTime = end - start;
-	printResult(n, b, elapsedTime.count(), 2./3*n*n*n, k);
+	printResult(n, b, elapsedTime.count(), 2./3*n*n*n, k, omp_get_max_threads());
 	
 	delete[] A;
 	delete[] x;

@@ -4,8 +4,6 @@
 #include <cmath>
 #include <sstream>
 
-#include <omp.h>
-
 using namespace std;
 
 namespace
@@ -121,7 +119,7 @@ int init(int argc, char** argv, int* n, real** A, real** b, bool tiled)
 	return k;
 }
 
-void printResult(int n, real* x, long long ns, double flopCount, int k)
+void printResult(int n, real* x, long long ns, double flopCount, int k, int maxThreads)
 {
 	for (int i = 0; i < n; ++i)
 	    printf("%.60f\n", x[i]);
@@ -130,7 +128,7 @@ void printResult(int n, real* x, long long ns, double flopCount, int k)
 	double seconds = ns/giga;
 	
 	fprintf(stderr, "#   n block thread         seconds          GFLOPS\n");
-	fprintf(stderr, "%5d %5d %6d %15f %15f\n", n, k, omp_get_max_threads(), seconds, flopCount/giga/seconds);
+	fprintf(stderr, "%5d %5d %6d %15f %15f\n", n, k, maxThreads, seconds, flopCount/giga/seconds);
 }
 
 void column2Tiled(int *r, int *c, int n, int k)
@@ -168,4 +166,5 @@ void printMatrix(int n, int k, real* A)
         }
         fprintf(stderr, "\n");
 	}
+	fprintf(stderr, "\n");
 }
