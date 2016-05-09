@@ -21,8 +21,11 @@ void factorize(int m, int n, int h, real* A)
 
 		#pragma omp for
 		for (int k = i + 1; k < n; ++k)
+		{
+			real tmp2 = A(i, k, h);
 			for (int l = i + 1; l < m; ++l)
-				A(l, k, h) -= A(l, i, h)*A(i, k, h);
+				A(l, k, h) -= A(l, i, h)*tmp2;
+		}
     }
 }
 
@@ -32,8 +35,11 @@ void updateRight(int m, int n, int h, real* A)
 	for (int j = m; j < n; ++j)
 	{
 		for (int k = 0; k < m - 1; ++k)
+		{
+			real tmp = A(k, j, h);
 			for (int l = k + 1; l < m; ++l)
-				A(l, j, h) -= A(k, j, h)*A(l, k, h);
+				A(l, j, h) -= tmp*A(l, k, h);
+		}
 	}
 }
 

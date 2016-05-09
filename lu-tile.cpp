@@ -26,8 +26,11 @@ void factorize(int m, int n, real* AA)
 					A(l, i, n) *= tmp;
 		
 				for (int k = i + 1; k < n; ++k)
+				{
+					real tmp2 = A(i, k, n);
 					for (int l = i + 1; l < n; ++l)
-						A(l, k, n) -= A(l, i, n)*A(i, k, n);
+						A(l, k, n) -= A(l, i, n)*tmp2;
+				}
 			}
 			else
 			{
@@ -38,8 +41,11 @@ void factorize(int m, int n, real* AA)
 					A(l, i, h) *= tmp;
 		
 				for (int k = i + 1; k < n; ++k)
+				{
+					real tmp2 = AA[n*k + i];
 					for (int l = 0; l < h; ++l)
-						A(l, k, h) -= A(l, i, h)*AA[n*k + i]/*A(i, k, h)*/;
+						A(l, k, h) -= A(l, i, h)*tmp2;
+				}
 			}
 		}
     }
@@ -58,8 +64,11 @@ void updateRight(int m, int n, int h, real* A)
 		for (int j = 0; j < w; ++j)
 		{
 			for (int k = 0; k < m - 1; ++k)
+			{
+				real tmp = B[m*j + k];
 				for (int l = k + 1; l < m; ++l)
-					B[m*j + l] -= B[m*j + k]*A(l, k, m);
+					B[m*j + l] -= tmp*A(l, k, m);
+			}
 		}
 	}
 }
@@ -131,30 +140,6 @@ void LU(int n, int k, real* A)
 		//printMatrix(n, k, A);	fprintf(stderr, "\n");
 	}
 }
-
-/*// Solve Lx = b for x.
-void forwardSubstitution(int n, real* A, real* x, real* b)
-{
-	for (int i = 0; i < n; ++i)
-	{
-		real sum = b[i];
-		for (int j = 0; j < i; ++j)
-			sum -= A(i, j, n)*x[j];
-		x[i] = sum;
-	}
-}
-
-// Solve Ux = b for x.
-void backwardSubstitution(int n, real* A, real* x, real* b)
-{
-	for (int i = n - 1; i >= 0; --i)
-	{
-		real sum = b[i];
-		for (int j = i + 1; j < n; ++j)
-			sum -= A(i, j, n)*x[j];
-		x[i] = sum/A(i, i, n);
-	}
-}*/
 
 // Solve Lx = b for x.
 void forwardSubstitution(int n, int k, real* A, real* x, real* b)
