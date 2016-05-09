@@ -1,12 +1,14 @@
 SHELL = /bin/bash
-FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG -fopenmp -fprofile-use $(CXXFLAGS)
+FLAGS = -std=c++11 -Wall -pedantic -Ofast -march=native -D NDEBUG $(CXXFLAGS)
+CFLAGS = -fopenmp -fprofile-use $(FLAGS)
+NVFLAGS = $(FLAGS)
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
 SIMPLE = lu-seq lu-sca-seq
 BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile
+BIN = $(SIMPLE) $(BLOCK) error
 BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
 E = 0.000006 # Max allowed relative error.
-BIN = $(SIMPLE) $(BLOCK) error
 
 .PHONY : all
 all : $(BIN)
@@ -63,28 +65,28 @@ xeon :
 	make CXX=icc CXXFLAGS='-mmic -vec-report'
 
 error : error.cpp
-	$(CXX) -o $@ $^ $(FLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS)
 	
 common.o : common.cpp common.h
-	$(CXX) -c common.cpp $(FLAGS)
+	$(CXX) -c common.cpp $(CFLAGS)
 	
 lu-seq : lu-seq.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS)
 	
 lu-par : lu-par.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS)
 
 lu-tile : lu-tile.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS)
 	
 lu-sca-seq : lu-seq.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
+	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 	
 lu-sca-par : lu-par.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
+	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 
 lu-sca-tile : lu-tile.cpp common.o
-	$(CXX) -o $@ $^ $(FLAGS) -fno-tree-vectorize
+	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 
 .PHONY : clean
 clean :
