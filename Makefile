@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 FLAGS = -std=c++11 -D NDEBUG $(CXXFLAGS)
 CFLAGS = -pedantic -Wall -Ofast -march=native -fopenmp -fprofile-use $(FLAGS)
-NVFLAGS = -O3 -lcublas $(FLAGS)
+NVFLAGS = -O3 $(FLAGS)
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
 SIMPLE = lu-seq lu-sca-seq lu-cu-blas
@@ -89,7 +89,7 @@ lu-sca-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 
 lu-cu-blas : lu-cu-blas.cu common.o
-	nvcc -o $@ $^ $(NVFLAGS)
+	nvcc -o $@ $^ -lcusolver $(NVFLAGS)
 
 .PHONY : clean
 clean :
