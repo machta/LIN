@@ -9,6 +9,7 @@ lu-sca-seq
 lu-sca-par
 lu-sca-tile
 lu-cu-blas
+lu-cu-par
 *.gcda
 res*
 *.jpg

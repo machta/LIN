@@ -93,7 +93,7 @@ void LU(int n, int k, real* A)
 			updateDown(n - i, k, n, leftTop);
 		}
 		
-		//printMatrix(n, n, A);	fprintf(stderr, "\n");
+		//printMatrix(n, n, A);
 	}
 }
 

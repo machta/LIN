@@ -5,7 +5,7 @@ NVFLAGS = -O3 $(FLAGS)
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
 SIMPLE = lu-seq lu-sca-seq lu-cu-blas
-BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile
+BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile lu-cu-par
 BIN = $(SIMPLE) $(BLOCK) error
 BLOCK_SIZES = 2 4 8 16 32 64 128 256 512 1024 10 20 30 40 50 100 500 1000
 E = 0.000006 # Max allowed relative error.
@@ -90,6 +90,9 @@ lu-sca-tile : lu-tile.cpp common.o
 
 lu-cu-blas : lu-cu-blas.cu common.o
 	nvcc -o $@ $^ -lcusolver $(NVFLAGS)
+	
+lu-cu-par : lu-cu-par.cu common.o
+	nvcc -o $@ $^ $(NVFLAGS)
 
 .PHONY : clean
 clean :

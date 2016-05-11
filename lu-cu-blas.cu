@@ -8,7 +8,6 @@
 //#define A(r, c) A[n*(c) + (r)]
 
 #define HANDLE_ERROR(err) HandleError(err, __FILE__, __LINE__)
-
 void HandleError(cudaError_t err, const char* file, int line)
 {
 	if (err != cudaSuccess)
@@ -78,12 +77,12 @@ int main(int argc, char** argv)
 
     real* A;
     int n;
-    real* b;    
+    real* b;
     int k = init(argc, argv, &n, &A, &b, false);
 	real* x = new real[n];
 	
-	auto start = high_resolution_clock::now();	
-	LU(n, A);	
+	auto start = high_resolution_clock::now();
+	LU(n, A);
 	auto end = high_resolution_clock::now();
 	
 	forwardSubstitution(n, A, x, b);
