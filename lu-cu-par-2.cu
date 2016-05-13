@@ -51,8 +51,26 @@ __device__ void printSubMatrix(float* A, int m, int n, int h)
 
 __device__ void copySubMatrix(float* src, float* dest, int m, int n, int srcH, int destH)
 {
-	if (threadIdx.x < m && threadIdx.y < n)
-		dest[threadIdx.y*destH + threadIdx.x] = src[threadIdx.y*srcH + threadIdx.x];
+	/*if (threadIdx.x < m && threadIdx.y < n)
+		dest[threadIdx.y*destH + threadIdx.x] = src[threadIdx.y*srcH + threadIdx.x];*/
+		
+	/*for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+		{
+			int x = 2*threadIdx.x + j;
+			int y = 2*threadIdx.y + i;
+			if (x < m && y < n)
+				dest[y*destH + x] = src[y*srcH + x];
+		}*/
+		
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+		{
+			int x = threadIdx.x + blockDim.x*j;
+			int y = threadIdx.y + blockDim.y*i;
+			if (x < m && y < n)
+				dest[y*destH + x] = src[y*srcH + x];
+		}
 }
 
 __global__ void factorizeKernel(int m, int n, int h, float* A)
@@ -68,17 +86,20 @@ __global__ void factorizeKernel(int m, int n, int h, float* A)
 	
 	__syncthreads();
 	
+	//if (blockIdx.x == 1) printSubMatrix(C, m, n, m); __syncthreads();
+	
 	int id = blockDim.x*threadIdx.y + threadIdx.x;
 	
 	for (int i = 0; i < min(m - 1, n); ++i)
 	{
     	float tmp = 1/C[i*m + i];
     	
-    	int l = i + 1 + id;
-    	if (l < m)
+    	//int l = i + 1 + id;
+    	//if (l < m)
+    	for (int l = i + 1 + id; l < m; l += blockDim.x*blockDim.y)
     		C[i*m + l] *= tmp;
     		
-    	__syncthreads();
+    	__syncthreads();//if (blockIdx.x == 1) printSubMatrix(C, m, n, m); __syncthreads();
         
         /*#pragma omp for
 		for (int l = i + 1; l < m; ++l)
@@ -88,7 +109,7 @@ __global__ void factorizeKernel(int m, int n, int h, float* A)
 			for (int l = i + 1 + threadIdx.x; l < m; l += blockDim.x)
 				C[k*m + l] -= C[i*m + l]*C[k*m + i];
 
-		__syncthreads();
+		__syncthreads();//if (blockIdx.x == 1) printSubMatrix(C, m, n, m); __syncthreads();
 
 		/*#pragma omp for
 		for (int k = i + 1; k < n; ++k)
@@ -97,6 +118,7 @@ __global__ void factorizeKernel(int m, int n, int h, float* A)
 	}
     
     //if (blockIdx.x == 0) printSubMatrix(C, m, n, m); __syncthreads();
+    //if (blockIdx.x == 1) printSubMatrix(C, m, n, m); __syncthreads();
     
 	if (blockIdx.x == 0)
 		copySubMatrix(C, A, n, n, m, h);
@@ -106,7 +128,8 @@ __global__ void factorizeKernel(int m, int n, int h, float* A)
 void factorize(int m, int n, int h, float* Ad)
 {
 	dim3 grid(max((m - 1)/n, 1));
-	dim3 block(n, n);
+	int t = (n + 1)/2;
+	dim3 block(t, t);
 	int size = 2*n*n*sizeof(float);
 	
 	factorizeKernel<<<grid, block, size>>>(m, n, h, Ad);
@@ -124,16 +147,18 @@ __global__ void updateRightKernel(int m, int n, int h, float* A)
 	copySubMatrix(B, D, m, Dn, h, m);
 	
 	__syncthreads();
+
+	//if (blockIdx.x == 0) printSubMatrix(C, m, Dn, m); __syncthreads();	
+	//if (blockIdx.x == 0) printSubMatrix(D, m, Dn, m); __syncthreads();
 	
-	if (threadIdx.y < Dn)
+	for (int j = threadIdx.y; j < Dn; j += blockDim.y)
 	{
 		for (int k = 0; k < m - 1; ++k)
 		{
 			//if (blockIdx.x == 0) printSubMatrix(D, m, Dn, m); __syncthreads();
 			
-			int l = k + 1 + threadIdx.x;
-			if (l < m)
-				D[threadIdx.y*m + l] -= D[threadIdx.y*m + k]*C[k*m + l];
+			for (int l = k + 1 + threadIdx.x; l < m; l += blockDim.x)
+				D[j*m + l] -= D[j*m + k]*C[k*m + l];
 			
 			__syncthreads();
 		}
@@ -155,7 +180,8 @@ __global__ void updateRightKernel(int m, int n, int h, float* A)
 void updateRight(int m, int n, int h, float* Ad)
 {
 	dim3 grid((n - 1)/m);
-	dim3 block(m, m);
+	int t = (m + 1)/2;
+	dim3 block(t, t);
 	int size = 2*m*m*sizeof(float);
 	
 	updateRightKernel<<<grid, block, size>>>(m, n, h, Ad);
@@ -163,10 +189,10 @@ void updateRight(int m, int n, int h, float* Ad)
 
 __global__ void updateDownKernel(int n, const int k, int h, float* A)
 {
-	extern __shared__ float B[];
+	extern __shared__ float sharedMem[];
 	
-	float* C = B + k*k;
-	float* D = B + 2*k*k;
+	float* C = sharedMem;
+	float* D = C + k*k;
 	int Cm = min(k, n - (blockIdx.x + 1)*k);
 	int Dn = min(k, n - (blockIdx.y + 1)*k);
 	
@@ -174,41 +200,77 @@ __global__ void updateDownKernel(int n, const int k, int h, float* A)
 	float* Cglobal = A + (blockIdx.x + 1)*k;
 	float* Dglobal = A + (blockIdx.y + 1)*k*h;
 	
-	copySubMatrix(Bglobal, B, Cm, Dn, h, k);
 	copySubMatrix(Cglobal, C, Cm, k, h, k);
 	copySubMatrix(Dglobal, D, k, Dn, h, k);
 	
 	__syncthreads();
 	
-	int x = threadIdx.x;
-	int y = threadIdx.y;
+	//if (blockIdx.x == 0 && blockIdx.y == 0) printSubMatrix(Bglobal, k, k, h); __syncthreads();
+	//if (blockIdx.x == 0 && blockIdx.y == 0) printSubMatrix(C, k, k, k); __syncthreads();
+	//if (blockIdx.x == 0 && blockIdx.y == 0) printSubMatrix(D, k, k, k); __syncthreads();
 	
-	if (x < Cm && y < Dn)
+	int x = 2*threadIdx.x;
+	int y = 2*threadIdx.y;
+	
+	D += y*k;
+	float* DD = D + k;
+	C += x;
+	float tmp00 = 0, tmp01 = 0, tmp10 = 0, tmp11 = 0;
+	
+	/*for (int i = 0; i < k; i++)
 	{
-		D += y*k;
-		C += x;
-		float tmp = 0;
+		float tmpC0 = C[0], tmpC1 = C[1];
 		
-		for (int i = 0; i < k; i++)
-		{
-			tmp += *C**D;
-			C += k;
-			D++;
-		}
+		float tmpD = *D;		
+		tmp00 += tmpC0*tmpD;
+		tmp10 += tmpC1*tmpD;
+		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
+			//printf("%f %f\n", tmpC1, tmpD);
 		
-		B[y*k + x] -= tmp;
+		tmpD = *DD;
+		tmp01 += tmpC0*tmpD;
+		tmp11 += tmpC1*tmpD;
+		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
+			//printf("%f %f\n", tmpC1, tmpD);		
+		
+		C += k;
+		D++;
+		DD++;
+	}*/
+	
+	for (int i = 0; i < k; i++)
+	{
+		float tmpD0 = *D, tmpD1 = *DD;
+		
+		float tmpC = C[0];
+		tmp00 += tmpD0*tmpC;
+		tmp01 += tmpD1*tmpC;		
+		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
+			//printf("%f %f\n", tmpC1, tmpD);
+		
+		tmpC = C[1];
+		tmp10 += tmpD0*tmpC;
+		tmp11 += tmpD1*tmpC;
+		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
+			//printf("%f %f\n", tmpC1, tmpD);		
+		
+		C += k;
+		D++;
+		DD++;
 	}
 	
-	__syncthreads();
-    
-	copySubMatrix(B, Bglobal, Cm, Dn, k, h);
+	if (x < Cm && y < Dn) Bglobal[y*h + x] -= tmp00;
+	if (x + 1 < Cm && y < Dn) Bglobal[y*h + x + 1] -= tmp10;
+	if (x < Cm && y + 1 < Dn) Bglobal[(y + 1)*h + x] -= tmp01;
+	if (x + 1 < Cm && y + 1< Dn) Bglobal[(y + 1)*h + x + 1] -= tmp11;
 }
 
 void updateDown(int n, int k, int h, float* Ad)
 {
 	dim3 grid((n - 1)/k, (n - 1)/k);
-	dim3 block(k, k);
-	int size = 3*k*k*sizeof(float);
+	int t = (k + 1)/2;
+	dim3 block(t, t);
+	int size = 2*k*k*sizeof(float);
 	
 	updateDownKernel<<<grid, block, size>>>(n, k, h, Ad);
 }
@@ -224,16 +286,18 @@ void LU(int n, int k, float* A)
 	{
 		int w = std::min(k, n - i);
 		float* leftTop = Ad + i*n + i;
+		//printDeviceMatrix(n, n, A, Ad);
 		
-		factorize(n - i, w, n, leftTop);
+		factorize(n - i, w, n, leftTop); //printDeviceMatrix(n, n, A, Ad);
 		
 		//if (i < N - 1)
 		{
-			updateRight(k, n - i, n, leftTop);
-			updateDown(n - i, k, n, leftTop);
+			updateRight(k, n - i, n, leftTop); //printDeviceMatrix(n, n, A, Ad);
+			updateDown(n - i, k, n, leftTop); //printDeviceMatrix(n, n, A, Ad);
 		}
 		
 		//printDeviceMatrix(n, n, A, Ad);
+		//if (i > 0) exit(0);
 	}
 	
 	syncHost(A, Ad, n, n);
@@ -275,7 +339,7 @@ int main(int argc, char** argv)
     int k = init(argc, argv, &n, &A, &b, false);
 	real* x = new real[n];
 	
-	k = min(k, 32); // 32*32 is the maximum number of threads per block
+	k = min(k, 64);
 	
 	auto start = high_resolution_clock::now();
 	LU(n, k, A);
