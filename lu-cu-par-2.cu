@@ -7,6 +7,10 @@
 #define A(r, c, h) A[(h)*(c) + (r)]
 //#define A(r, c) A[n*(c) + (r)]
 
+const int MAX_SHARED_MEM = 16*1024;
+const int THREADS = 32;
+const int UNROLL = 2;
+
 #define HANDLE_ERROR(err) HandleError(err, __FILE__, __LINE__)
 void HandleError(cudaError_t err, const char* file, int line)
 {
@@ -63,13 +67,26 @@ __device__ void copySubMatrix(float* src, float* dest, int m, int n, int srcH, i
 				dest[y*destH + x] = src[y*srcH + x];
 		}*/
 		
-	for (int i = 0; i < 2; i++)
+	/*for (int i = 0; i < 2; i++)
 		for (int j = 0; j < 2; j++)
 		{
 			int x = threadIdx.x + blockDim.x*j;
 			int y = threadIdx.y + blockDim.y*i;
 			if (x < m && y < n)
 				dest[y*destH + x] = src[y*srcH + x];
+		}*/
+	
+	for (int i = threadIdx.y; i < n; i += blockDim.y)
+		for (int j = threadIdx.x; j < m; j += blockDim.x)
+		{
+			dest[i*destH + j] = src[i*srcH + j];
+			
+			//printf("%d %d\n", i*destH + j, i*srcH + j);
+			
+			if (i*srcH + j > m*n)
+				printf("(%d,%d) src segfault", threadIdx.x, threadIdx.y);
+			if (i*destH + j > m*n)
+				printf("(%d,%d) dest segfault", threadIdx.x, threadIdx.y);
 		}
 }
 
@@ -129,10 +146,10 @@ void factorize(int m, int n, int h, float* Ad)
 {
 	dim3 grid(max((m - 1)/n, 1));
 	int t = (n + 1)/2;
+	t = THREADS;
 	dim3 block(t, t);
-	int size = 2*n*n*sizeof(float);
 	
-	factorizeKernel<<<grid, block, size>>>(m, n, h, Ad);
+	factorizeKernel<<<grid, block, MAX_SHARED_MEM>>>(m, n, h, Ad);
 }
 
 __global__ void updateRightKernel(int m, int n, int h, float* A)
@@ -181,10 +198,10 @@ void updateRight(int m, int n, int h, float* Ad)
 {
 	dim3 grid((n - 1)/m);
 	int t = (m + 1)/2;
+	t = THREADS;
 	dim3 block(t, t);
-	int size = 2*m*m*sizeof(float);
 	
-	updateRightKernel<<<grid, block, size>>>(m, n, h, Ad);
+	updateRightKernel<<<grid, block, MAX_SHARED_MEM>>>(m, n, h, Ad);
 }
 
 __global__ void updateDownKernel(int n, const int k, int h, float* A)
@@ -192,7 +209,7 @@ __global__ void updateDownKernel(int n, const int k, int h, float* A)
 	extern __shared__ float sharedMem[];
 	
 	float* C = sharedMem;
-	float* D = C + k*k;
+	float* D = sharedMem + k*k;
 	int Cm = min(k, n - (blockIdx.x + 1)*k);
 	int Dn = min(k, n - (blockIdx.y + 1)*k);
 	
@@ -209,74 +226,67 @@ __global__ void updateDownKernel(int n, const int k, int h, float* A)
 	//if (blockIdx.x == 0 && blockIdx.y == 0) printSubMatrix(C, k, k, k); __syncthreads();
 	//if (blockIdx.x == 0 && blockIdx.y == 0) printSubMatrix(D, k, k, k); __syncthreads();
 	
-	int x = 2*threadIdx.x;
-	int y = 2*threadIdx.y;
+	float tmp[UNROLL];
+		
+	int x = threadIdx.x;
+	int y = threadIdx.y;
 	
-	D += y*k;
-	float* DD = D + k;
-	C += x;
-	float tmp00 = 0, tmp01 = 0, tmp10 = 0, tmp11 = 0;
-	
-	/*for (int i = 0; i < k; i++)
+	for (int i = 0; i < UNROLL; i++)
 	{
-		float tmpC0 = C[0], tmpC1 = C[1];
-		
-		float tmpD = *D;		
-		tmp00 += tmpC0*tmpD;
-		tmp10 += tmpC1*tmpD;
-		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
-			//printf("%f %f\n", tmpC1, tmpD);
-		
-		tmpD = *DD;
-		tmp01 += tmpC0*tmpD;
-		tmp11 += tmpC1*tmpD;
-		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
-			//printf("%f %f\n", tmpC1, tmpD);		
-		
-		C += k;
-		D++;
-		DD++;
-	}*/
+		for (int j = 0; j < UNROLL; j++)
+			tmp[j] = 0;
 	
-	for (int i = 0; i < k; i++)
-	{
-		float tmpD0 = *D, tmpD1 = *DD;
+		D = sharedMem + k*k + i*k*k/UNROLL + y*k;
 		
-		float tmpC = C[0];
-		tmp00 += tmpD0*tmpC;
-		tmp01 += tmpD1*tmpC;		
-		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
-			//printf("%f %f\n", tmpC1, tmpD);
-		
-		tmpC = C[1];
-		tmp10 += tmpD0*tmpC;
-		tmp11 += tmpD1*tmpC;
-		//if (x == 0 && y == 0 && blockIdx.x == 0 && blockIdx.y == 0)
-			//printf("%f %f\n", tmpC1, tmpD);		
-		
-		C += k;
-		D++;
-		DD++;
+		for (int j = 0; j < k; j++)
+		{
+			for (int l = 0; l < UNROLL; l++)
+			{
+				tmp[l] += C[j*k + x + l*k/UNROLL]*D[0];
+				
+				//if (blockIdx.x == 0 && blockIdx.y == 0 && x == 0 && y == 0)
+					//printf("l=%d %.02f %.02f\n", l, C[j*k + x + l*k/UNROLL], D[0]);
+			}
+			D++;
+		}
+
+		//if (blockIdx.x == 0 && blockIdx.y == 0 && x == 0 && y == 0)
+			//printf("%f %f\n", tmp[0], tmp[1]);
+
+		int yy = y + i*k/UNROLL;
+		for (int j = 0; j < UNROLL; j++)
+		{
+			int xx = x + j*k/UNROLL;
+			
+			if (xx < Cm && yy < Dn)
+			{
+				//if (blockIdx.x == 0 && blockIdx.y == 0 && x == 0 && y == 0)
+					//printf("%.02f ", Bglobal[yy*h + xx]);
+			
+				Bglobal[yy*h + xx] -= tmp[j];
+				
+				//if (blockIdx.x == 0 && blockIdx.y == 0 && x == 0 && y == 0)
+					//printf("%.02f \n", Bglobal[yy*h + xx]);
+			}
+		}
 	}
-	
-	if (x < Cm && y < Dn) Bglobal[y*h + x] -= tmp00;
-	if (x + 1 < Cm && y < Dn) Bglobal[y*h + x + 1] -= tmp10;
-	if (x < Cm && y + 1 < Dn) Bglobal[(y + 1)*h + x] -= tmp01;
-	if (x + 1 < Cm && y + 1< Dn) Bglobal[(y + 1)*h + x + 1] -= tmp11;
 }
 
 void updateDown(int n, int k, int h, float* Ad)
 {
 	dim3 grid((n - 1)/k, (n - 1)/k);
-	int t = (k + 1)/2;
+	int t = k/UNROLL;
 	dim3 block(t, t);
-	int size = 2*k*k*sizeof(float);
 	
-	updateDownKernel<<<grid, block, size>>>(n, k, h, Ad);
+	updateDownKernel<<<grid, block, MAX_SHARED_MEM>>>(n, k, h, Ad);
 }
 
-void LU(int n, int k, float* A)
+void LU(int n, int t, float* A)
 {
+	const int k = 64;
+	if (t*UNROLL != k)
+		exit(1);
+
 	float* Ad;
 	HANDLE_ERROR(cudaMalloc(&Ad, n*n*sizeof(float)));
 	
@@ -284,21 +294,24 @@ void LU(int n, int k, float* A)
 	
 	for (int i = 0; i < n; i += k)
 	{
+		printf("i=%d\n", i);
+		
 		int w = std::min(k, n - i);
 		float* leftTop = Ad + i*n + i;
-		//printDeviceMatrix(n, n, A, Ad);
 		
-		factorize(n - i, w, n, leftTop); //printDeviceMatrix(n, n, A, Ad);
+		factorize(n - i, w, n, leftTop);
 		
 		//if (i < N - 1)
 		{
-			updateRight(k, n - i, n, leftTop); //printDeviceMatrix(n, n, A, Ad);
-			updateDown(n - i, k, n, leftTop); //printDeviceMatrix(n, n, A, Ad);
+			//updateRight(k, n - i, n, leftTop);
+			//updateDown(n - i, k, n, leftTop);
 		}
 		
 		//printDeviceMatrix(n, n, A, Ad);
-		//if (i > 0) exit(0);
+		if (i >= 0) break;
 	}
+	
+	printf("before the end\n");
 	
 	syncHost(A, Ad, n, n);
 	
@@ -335,11 +348,11 @@ int main(int argc, char** argv)
 
     real* A;
     int n;
-    real* b;    
+    real* b;
     int k = init(argc, argv, &n, &A, &b, false);
 	real* x = new real[n];
 	
-	k = min(k, 64);
+	k = min(k, 32);
 	
 	auto start = high_resolution_clock::now();
 	LU(n, k, A);
@@ -351,7 +364,7 @@ int main(int argc, char** argv)
 	//printMatrix(n, n, A);
 	
 	nanoseconds elapsedTime = end - start;
-	printResult(n, b, elapsedTime.count(), 2./3*n*n*n, k, k*k);
+	//printResult(n, b, elapsedTime.count(), 2./3*n*n*n, k, k*k);
 	
 	delete[] A;
 	delete[] x;
