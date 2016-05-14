@@ -8,9 +8,9 @@ lu-tile
 lu-sca-seq
 lu-sca-par
 lu-sca-tile
-lu-cu-blas
-lu-cu-par-2
-lu-cu-par
+lu-cu-sdk
+lu-cu-simple
+lu-cu-unroll
 *.gcda
 res*
 *.jpg

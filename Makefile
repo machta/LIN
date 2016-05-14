@@ -4,8 +4,8 @@ CFLAGS = -pedantic -Wall -Ofast -march=native -fopenmp -fprofile-use $(FLAGS)
 NVFLAGS = -O3 $(FLAGS)
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
-SIMPLE = lu-seq lu-sca-seq lu-cu-blas
-BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile lu-cu-par lu-cu-par-2
+SIMPLE = lu-seq lu-sca-seq lu-cu-sdk
+BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile lu-cu-simple lu-cu-unroll
 BIN = $(SIMPLE) $(BLOCK) error
 BLOCK_SIZES = 1 2 3 4 5 8 10 12 16 24 32 64 128 256 512 1024
 E = 0.000006 # Max allowed relative error.
@@ -88,13 +88,13 @@ lu-sca-par : lu-par.cpp common.o
 lu-sca-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 
-lu-cu-blas : lu-cu-blas.cu common.o
+lu-cu-sdk : lu-cu-sdk.cu common.o
 	nvcc -o $@ $^ -lcusolver $(NVFLAGS)
 	
-lu-cu-par : lu-cu-par.cu common.o
+lu-cu-simple : lu-cu-simple.cu common.o
 	nvcc -o $@ $^ $(NVFLAGS)
 	
-lu-cu-par-2 : lu-cu-par-2.cu common.o
+lu-cu-unroll : lu-cu-unroll.cu common.o
 	nvcc -o $@ $^ $(NVFLAGS)
 
 .PHONY : clean
