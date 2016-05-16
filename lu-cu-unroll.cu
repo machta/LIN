@@ -304,6 +304,10 @@ int adjustK(int v)
 
 int main(int argc, char** argv)
 {
+	cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    fprintf(stderr, "# Device name: %s\n", prop.name);
+    
     using namespace std::chrono;
 
     real* A;
