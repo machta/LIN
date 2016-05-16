@@ -11,6 +11,7 @@ lu-sca-tile
 lu-cu-sdk
 lu-cu-simple
 lu-cu-unroll
+lu-cu-memory
 *.gcda
 res*
 *.jpg
