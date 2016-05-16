@@ -45,7 +45,7 @@ void initFromInput(int n, int k, real* A, real* b)
 }
 
 // Create a random symmetric positive definit matrix A and vector b.
-void initRandom(int n, int k, real* A, real* b)
+/*void initRandom(int n, int k, real* A, real* b)
 {
 	srand (time(NULL));
 	const real scale = 100./RAND_MAX;
@@ -70,6 +70,17 @@ void initRandom(int n, int k, real* A, real* b)
 	}
 	
 	delete[] columnSums;
+}*/
+
+// A simplified version -- the other version took too long.
+void initRandom(int n, int k, real* A, real* b)
+{
+	for (int j = 0; j < n; ++j)
+		for (int i = 0; i < n; ++i)
+			A[j*n + i] = 1;
+		
+	for (int j = 0; j < n; ++j)
+		setMatrix(n*2, j, j, n, k, A);
 }
 
 } // namespace
