@@ -1,0 +1,13 @@
+set terminal jpeg
+set output "graphs/cuda/perf-GPU13.jpg"
+
+#set logscale x 2
+set xlabel "N"
+set ylabel "GFLOPS"
+set key left top
+
+plot "res/res-lu-cu-sdk-GPU13-perf.txt" using 1:5 with lp title "lu-cu-sdk",\
+     "res/res-lu-cu-unroll-GPU13-perf.txt" using 1:5 with lp title "lu-cu-unroll",\
+     "res/res-lu-cu-simple-GPU13-perf.txt" using 1:5 with lp title "lu-cu-simple",\
+
+     

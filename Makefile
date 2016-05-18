@@ -58,6 +58,7 @@ gnuplot :
 	mkdir -p graphs
 	mkdir -p graphs/x86
 	mkdir -p graphs/xeon
+	mkdir -p graphs/cuda
 	ls gnuplot-*.txt | xargs -n1 gnuplot
 	
 .PHONY : xeon

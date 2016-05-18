@@ -1,0 +1,13 @@
+set terminal jpeg
+set output "graphs/cuda/block-cuda-16K.jpg"
+
+set logscale x 2
+set xlabel "unroll factor"
+set ylabel "GFLOPS"
+set key top right
+
+plot "res/res-lu-cu-unroll-GPU20-block-16x.txt" using 2:5 with lp title "GTX 780 Ti",\
+     "res/res-lu-cu-unroll-GPU10-block-16x.txt" using 2:5 with lp title "Tesla K40",\
+     "res/res-lu-cu-unroll-GPU21-block-16x.txt" using 2:5 with lp title "GTX 480",\
+     "res/res-lu-cu-unroll-GPU13-block-16x.txt" using 2:5 with lp title "GTX 750"
+     
