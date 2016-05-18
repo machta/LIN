@@ -1,0 +1,18 @@
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384     1   1024       23.825618      123.062117
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384     2    512       14.024532      209.064442
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384     4    256       11.323408      258.935395
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384     8    128       18.098496      162.004129
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384    16     64       27.534514      106.485663
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384    32     32       35.057558       83.634776

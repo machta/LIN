@@ -1,0 +1,44 @@
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 1024    32   1024        0.154819        4.623644
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 2048    32   1024        0.235659       24.300502
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 3072    32   1024        0.439421       43.983719
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 4096    32   1024        0.755025       60.677458
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 5120    32   1024        1.222475       73.194561
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 6144    32   1024        2.062064       74.982557
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 7168    32   1024        3.081265       79.684480
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 8192    32   1024        4.508062       81.299659
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 9216    32   1024        6.272535       83.194202
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+10240    32   1024        8.177371       87.537653
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+12288    32   1024       14.239893       86.865159
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+14336    32   1024       21.676259       90.616728
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384    32   1024       32.425497       90.423625
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+20480    32   1024       62.415830       91.749529
+# Device name: GeForce GTX 750
+ERROR: out of memory in lu-cu-simple.cu at line 219

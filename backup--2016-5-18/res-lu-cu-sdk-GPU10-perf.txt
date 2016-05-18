@@ -1,0 +1,48 @@
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 1024  1024   1024        0.488394        1.465678
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 2048  2048   1024        0.487714       11.741765
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 3072  3072   1024        0.529730       36.485291
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 4096  4096   1024        0.666398       68.747142
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 5120  5120   1024        0.681253      131.344067
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 6144  6144   1024        0.831471      185.958217
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 7168  7168   1024        0.955904      256.855229
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192  8192   1024        1.032608      354.930299
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 9216  9216   1024        1.333096      391.448550
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+10240 10240   1024        1.567874      456.559636
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+12288 12288   1024        1.939787      637.673498
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+14336 14336   1024        3.124833      628.587809
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+16384 16384   1024        3.429799      854.869733
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+20480 20480   1024        6.335385      903.910869
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+24576 24576   1024        9.221138     1073.143572
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+28672 28672   1024       13.510115     1163.117692

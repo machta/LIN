@@ -1,0 +1,39 @@
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 1024    32   1024        0.050901       14.063015
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 2048    32   1024        0.116507       49.152528
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 3072    32   1024        0.274902       70.306373
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 4096    32   1024        0.555376       82.490072
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 5120    32   1024        1.001132       89.377282
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 6144    32   1024        1.640017       94.278771
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 7168    32   1024        2.517427       97.531729
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 8192    32   1024        3.653948      100.303530
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+ 9216    32   1024        5.123104      101.859841
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+10240    32   1024        6.919948      103.444108
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+12288    32   1024       11.274231      109.714849
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+14336    32   1024       17.731113      110.778816
+# Device name: GeForce GTX 480
+#   n block thread         seconds          GFLOPS
+16384    32   1024       27.382265      107.077740

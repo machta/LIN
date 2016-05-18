@@ -1,0 +1,47 @@
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 1024    32   1024        0.142699        5.016356
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 2048    32   1024        0.170827       33.523032
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 3072    32   1024        0.238848       80.919090
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 4096    32   1024        0.401134      114.208674
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 5120    32   1024        0.510014      175.443128
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 6144    32   1024        0.801444      192.925260
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 7168    32   1024        1.092249      224.792193
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 8192    32   1024        1.608748      227.819250
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+ 9216    32   1024        2.181359      239.226360
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+10240    32   1024        2.766949      258.706524
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+12288    32   1024        4.737916      261.074843
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+14336    32   1024        7.281421      269.759387
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384    32   1024       10.331239      283.802448
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+20480    32   1024       20.109714      284.768995
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+24576    32   1024       33.427167      296.034795
+# Device name: GeForce GTX 780 Ti
+ERROR: out of memory in lu-cu-simple.cu at line 219

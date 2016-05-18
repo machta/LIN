@@ -1,0 +1,6 @@
+#   n block thread         seconds          GFLOPS
+24576   128     61      189.954789       52.094526
+#   n block thread         seconds          GFLOPS
+24576   128    122      119.933112       82.509363
+#   n block thread         seconds          GFLOPS
+24576   128    244       86.889206      113.887618

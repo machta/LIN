@@ -1,0 +1,18 @@
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384     1   1024        8.627123      339.861962
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384     2    512        6.575237      445.920212
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384     4    256        5.967506      491.332762
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384     8    128        7.057918      415.424349
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384    16     64       11.934069      245.685778
+# Device name: GeForce GTX 780 Ti
+#   n block thread         seconds          GFLOPS
+16384    32     32       15.808216      185.475136

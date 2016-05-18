@@ -1,0 +1,18 @@
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192     1   1024        1.762819      207.907797
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192     2    512        1.400136      261.763049
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192     4    256        1.385543      264.520000
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192     8    128        1.434037      255.574838
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192    16     64        2.406291      152.310716
+# Device name: Tesla K40c
+#   n block thread         seconds          GFLOPS
+ 8192    32     32        3.056012      119.928801

@@ -1,0 +1,44 @@
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 1024     4    256        0.148491        4.820673
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 2048     4    256        0.192959       29.677946
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 3072     4    256        0.281597       68.634825
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 4096     4    256        0.406833      112.608856
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 5120     4    256        0.585420      152.844885
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 6144     4    256        0.864234      178.908465
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 7168     4    256        1.239694      198.056143
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 8192     4    256        1.720075      213.074375
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+ 9216     4    256        2.450050      212.990953
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+10240     4    256        3.255709      219.868491
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+12288     4    256        5.508239      224.563720
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+14336     4    256        8.169906      240.422798
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+16384     4    256       11.672681      251.187450
+# Device name: GeForce GTX 750
+#   n block thread         seconds          GFLOPS
+20480     4    256       21.737673      263.442327
+# Device name: GeForce GTX 750
+ERROR: out of memory in lu-cu-unroll.cu at line 240
