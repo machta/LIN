@@ -1,12 +1,17 @@
 SHELL = /bin/bash
+
 FLAGS = -std=c++11 -D NDEBUG $(CXXFLAGS)
 CFLAGS = -pedantic -Wall -Ofast -march=native -fopenmp -fprofile-use $(FLAGS)
 NVFLAGS = -O3 $(FLAGS)
+
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
-SIMPLE = lu-seq lu-sca-seq lu-cu-sdk
-BLOCK  = lu-par lu-tile lu-sca-par lu-sca-tile lu-cu-simple lu-cu-unroll lu-cu-memory
-BIN = $(SIMPLE) $(BLOCK) error
+
+SIMPLE = lu-seq lu-sca-seq
+BLOCK = lu-par lu-tile lu-sca-par lu-sca-tile
+CUDA = lu-cu-sdk lu-cu-simple lu-cu-unroll lu-cu-memory
+BIN = $(SIMPLE) $(BLOCK) $(CUDA) error
+
 BLOCK_SIZES = 1 2 3 4 5 8 10 12 16 24 32 64 128 256 512 1024
 E = 0.000006 # Max allowed relative error.
 
@@ -26,7 +31,7 @@ test : all
 			[[ `cat $(TMP1) $(TMP2) | ./error 2>/dev/null` < $(E) ]] || echo Failed Test: "./$$t i < $$f" ; \
 		done ; \
 		\
-		for t in $(BLOCK) ; do \
+		for t in $(BLOCK) $(CUDA) ; do \
 			for b in $(BLOCK_SIZES) ; do \
 				./$$t i $$b < $$f > $(TMP2) 2>/dev/null ; \
 				cat $$f | tail -n `cat $(TMP2) | wc -l` > $(TMP1) ; \
@@ -39,7 +44,7 @@ test : all
 prof :
 	rm -f *.gcda
 	make clean
-	make CXXFLAGS='$(CXXFLAGS) -fprofile-generate -fno-profile-use'
+	make $(BLOCK) CXXFLAGS='$(CXXFLAGS) -fprofile-generate -fno-profile-use'
 	for t in $(BLOCK) ; do \
 		for b in 64 128 256 ; do \
 			for n in 1024 2048 4096 ; do \
@@ -63,16 +68,16 @@ gnuplot :
 	
 .PHONY : xeon
 xeon :
-	make CXX=icc CXXFLAGS='-mmic -vec-report'
+	make $(SIMPLE) $(BLOCK) CXX=icc CXXFLAGS='-mmic -vec-report'
 
 error : error.cpp
-	$(CXX) -o $@ $^ $(CFLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS) -fno-profile-use
 	
 common.o : common.cpp common.h
 	$(CXX) -c common.cpp $(CFLAGS)
 	
 lu-seq : lu-seq.cpp common.o
-	$(CXX) -o $@ $^ $(CFLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS) -fno-profile-use
 	
 lu-par : lu-par.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS)
@@ -81,7 +86,7 @@ lu-tile : lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS)
 	
 lu-sca-seq : lu-seq.cpp common.o
-	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
+	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize -fno-profile-use
 	
 lu-sca-par : lu-par.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
