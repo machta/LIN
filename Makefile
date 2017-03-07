@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 FLAGS = -std=c++11 -D NDEBUG $(CXXFLAGS)
 CFLAGS = -pedantic -Wall -Ofast -march=native -fopenmp -fprofile-use $(FLAGS)
-NVFLAGS = -O3 $(FLAGS) -D_MWAITXINTRIN_H_INCLUDED -D_FORCE_INLINES #-D__STRICT_ANSI__
+NVFLAGS = -O3 $(FLAGS) -Wno-deprecated-gpu-targets -D_MWAITXINTRIN_H_INCLUDED -D_FORCE_INLINES #-D__STRICT_ANSI__
 
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
@@ -64,7 +64,7 @@ gnuplot :
 	mkdir -p graphs/x86
 	mkdir -p graphs/xeon
 	mkdir -p graphs/cuda
-	ls gnuplot-*.txt | xargs -n1 gnuplot
+	ls gnuplot/* | xargs -n1 gnuplot
 	
 .PHONY : xeon
 xeon :

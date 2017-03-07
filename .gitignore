@@ -13,7 +13,7 @@ lu-cu-simple
 lu-cu-unroll
 lu-cu-memory
 *.gcda
-res*
+res
 *.jpg
 *.optrpt
 graphs
