@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 FLAGS = -std=c++11 -D NDEBUG $(CXXFLAGS)
 CFLAGS = -pedantic -Wall -Ofast -march=native -fopenmp -fprofile-use $(FLAGS)
-NVFLAGS = -O3 $(FLAGS)
+NVFLAGS = -O3 $(FLAGS) -D_MWAITXINTRIN_H_INCLUDED -D_FORCE_INLINES #-D__STRICT_ANSI__
 
 TMP1 := $(shell mktemp)
 TMP2 := $(shell mktemp)
@@ -70,40 +70,40 @@ gnuplot :
 xeon :
 	make $(SIMPLE) $(BLOCK) CXX=icc CXXFLAGS='-mmic -vec-report'
 
-error : error.cpp
+error : src/error.cpp
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-profile-use
 	
-common.o : common.cpp common.h
-	$(CXX) -c common.cpp $(CFLAGS)
+common.o : src/common.cpp src/common.h
+	$(CXX) -c src/common.cpp $(CFLAGS)
 	
-lu-seq : lu-seq.cpp common.o
+lu-seq : src/lu-seq.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-profile-use
 	
-lu-par : lu-par.cpp common.o
+lu-par : src/lu-par.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS)
 
-lu-tile : lu-tile.cpp common.o
+lu-tile : src/lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS)
 	
-lu-sca-seq : lu-seq.cpp common.o
+lu-sca-seq : src/lu-seq.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize -fno-profile-use
 	
-lu-sca-par : lu-par.cpp common.o
+lu-sca-par : src/lu-par.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 
-lu-sca-tile : lu-tile.cpp common.o
+lu-sca-tile : src/lu-tile.cpp common.o
 	$(CXX) -o $@ $^ $(CFLAGS) -fno-tree-vectorize
 
-lu-cu-sdk : lu-cu-sdk.cu common.o
+lu-cu-sdk : src/lu-cu-sdk.cu common.o
 	nvcc -o $@ $^ -lcusolver $(NVFLAGS)
 	
-lu-cu-simple : lu-cu-simple.cu common.o
+lu-cu-simple : src/lu-cu-simple.cu common.o
 	nvcc -o $@ $^ $(NVFLAGS)
 	
-lu-cu-unroll : lu-cu-unroll.cu common.o
+lu-cu-unroll : src/lu-cu-unroll.cu common.o
 	nvcc -o $@ $^ $(NVFLAGS)
 	
-lu-cu-memory : lu-cu-memory.cu common.o
+lu-cu-memory : src/lu-cu-memory.cu common.o
 	nvcc -o $@ $^ $(NVFLAGS)
 
 .PHONY : clean

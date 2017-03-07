@@ -18,7 +18,7 @@ res*
 *.optrpt
 graphs
 *.sh.*
-kratka-1/main
+kratka-2016/main
 
 # Compiled Object files
 *.slo
