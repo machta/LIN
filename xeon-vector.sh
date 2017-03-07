@@ -1,7 +1,7 @@
 #!/bin/bash
 N='1 3 5 7 9 12 16 20 30'
 
-RES=res-lu-par-xeon-vector.txt
+RES=res/res-lu-par-xeon-vector.txt
 rm $RES
 
 for n in $N
@@ -10,7 +10,7 @@ do
 	./lu-par r $((1024*$n)) 512 2>&1 >/dev/null | tee -a $RES
 done
 
-RES=res-lu-tile-xeon-vector.txt
+RES=res/res-lu-tile-xeon-vector.txt
 rm $RES
 
 for n in $N
@@ -19,7 +19,7 @@ do
 	./lu-tile r $((1024*$n)) 128 2>&1 >/dev/null | tee -a $RES
 done
 
-RES=res-lu-sca-par-xeon-vector.txt
+RES=res/res-lu-sca-par-xeon-vector.txt
 rm $RES
 
 for n in $N
@@ -28,7 +28,7 @@ do
 	./lu-sca-par r $((1024*$n)) 128 2>&1 >/dev/null | tee -a $RES
 done
 
-RES=res-lu-sca-tile-xeon-vector.txt
+RES=res/res-lu-sca-tile-xeon-vector.txt
 rm $RES
 
 for n in $N

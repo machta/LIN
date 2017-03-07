@@ -35,7 +35,7 @@ export CUDA_VISIBLE_DEVICES=1
 
 for n in 8 16
 do
-	RES=res-$P-GPU2$CUDA_VISIBLE_DEVICES-block-"$n"x.txt
+	RES=res/res-$P-GPU2$CUDA_VISIBLE_DEVICES-block-"$n"x.txt
 	rm $RES
 	
 	for t in 1 2 4 8 16 32 

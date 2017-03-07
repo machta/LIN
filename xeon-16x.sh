@@ -1,7 +1,7 @@
 #!/bin/bash
 N=$((16*1024))
 
-RES=res-lu-tile-xeon-16x.txt
+RES=res/res-lu-tile-xeon-16x.txt
 
 rm $RES
 
@@ -11,7 +11,7 @@ do
 	./lu-tile r $N 128 2>&1 >/dev/null | tee -a $RES
 done
 
-RES=res-lu-par-xeon-16x.txt
+RES=res/res-lu-par-xeon-16x.txt
 
 rm $RES
 

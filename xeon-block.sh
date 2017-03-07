@@ -5,7 +5,7 @@ for t in 61 122 244
 do
 	for p in lu-tile lu-par lu-sca-tile lu-sca-par
 	do
-		RES="res-$p-xeon-block-"$t"x.txt"
+		RES="res/res-$p-xeon-block-"$t"x.txt"
 		rm $RES
 		
 		for b in 16 32 64 128 256 512 1024 2048

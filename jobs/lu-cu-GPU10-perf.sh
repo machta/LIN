@@ -35,7 +35,7 @@ export CUDA_VISIBLE_DEVICES=0
 for n in `seq 1 10` `seq 12 2 16` 20 24 28
 do
 	P=lu-cu-sdk
-	RES=res-$P-GPU1$CUDA_VISIBLE_DEVICES-perf.txt
+	RES=res/res-$P-GPU1$CUDA_VISIBLE_DEVICES-perf.txt
 	if [ $n == "1" ]
 	then
 		rm $RES
@@ -43,7 +43,7 @@ do
 	./$P r $((1024*$n)) 2>&1 >/dev/null | tee -a $RES
 	
 	P=lu-cu-unroll
-	RES=res-$P-GPU1$CUDA_VISIBLE_DEVICES-perf.txt
+	RES=res/res-$P-GPU1$CUDA_VISIBLE_DEVICES-perf.txt
 	if [ $n == "1" ]
 	then
 		rm $RES
@@ -51,7 +51,7 @@ do
 	./$P r $((1024*$n)) 4 2>&1 >/dev/null | tee -a $RES
 	
 	P=lu-cu-simple
-	RES=res-$P-GPU1$CUDA_VISIBLE_DEVICES-perf.txt
+	RES=res/res-$P-GPU1$CUDA_VISIBLE_DEVICES-perf.txt
 	if [ $n == "1" ]
 	then
 		rm $RES

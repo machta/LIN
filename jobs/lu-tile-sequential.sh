@@ -30,11 +30,11 @@
 # Do not change.
 #$ -q gpu_long.q
 
-rm res-lu-tile-sequential.txt
+rm res/res-lu-tile-sequential.txt
 
 for n in `seq 1 10` `seq 12 2 16` 20 32
 do
 	export OMP_NUM_THREADS=1
-	./lu-tile r $((1024*$n)) 256 2>&1 >/dev/null | tee -a res-lu-tile-sequential.txt
+	./lu-tile r $((1024*$n)) 256 2>&1 >/dev/null | tee -a res/res-lu-tile-sequential.txt
 done
 

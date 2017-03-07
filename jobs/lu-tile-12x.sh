@@ -30,11 +30,11 @@
 # Do not change.
 #$ -q gpu_long.q
 
-rm res-lu-tile-12x.txt
+rm res/res-lu-tile-12x.txt
 
 for t in 1 2 4 6 8 12 24
 do
 	export OMP_NUM_THREADS=$t
-	./lu-tile r $((1024*12)) 256 2>&1 >/dev/null | tee -a res-lu-tile-12x.txt
+	./lu-tile r $((1024*12)) 256 2>&1 >/dev/null | tee -a res/res-lu-tile-12x.txt
 done
 

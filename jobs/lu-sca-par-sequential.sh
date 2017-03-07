@@ -30,11 +30,11 @@
 # Do not change.
 #$ -q gpu_long.q
 
-rm res-lu-sca-par-sequential.txt
+rm res/res-lu-sca-par-sequential.txt
 
 for n in `seq 1 10` `seq 12 2 16` 20 32
 do
 	export OMP_NUM_THREADS=1
-	./lu-sca-par r $((1024*$n)) 128 2>&1 >/dev/null | tee -a res-lu-sca-par-sequential.txt
+	./lu-sca-par r $((1024*$n)) 128 2>&1 >/dev/null | tee -a res/res-lu-sca-par-sequential.txt
 done
 

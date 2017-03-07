@@ -30,11 +30,11 @@
 # Do not change.
 #$ -q gpu_long.q
 
-rm res-lu-par-4x.txt
+rm res/res-lu-par-4x.txt
 
 for t in 1 2 4 6 8 12 24
 do
 	export OMP_NUM_THREADS=$t
-	./lu-par r $((1024*4)) 256 2>&1 >/dev/null | tee -a res-lu-par-4x.txt
+	./lu-par r $((1024*4)) 256 2>&1 >/dev/null | tee -a res/res-lu-par-4x.txt
 done
 
